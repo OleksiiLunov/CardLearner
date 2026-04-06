@@ -9,9 +9,9 @@ export function AppShell({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="mx-auto flex min-h-screen w-full max-w-md flex-col px-4 pb-24 pt-4">
+    <div className="mx-auto flex min-h-screen w-full max-w-md flex-col px-4 pb-24">
       <AppHeader userEmail={userEmail} />
-      <main className="flex-1 py-6">{children}</main>
+      <main className="flex-1 py-5">{children}</main>
       <MobileNav />
     </div>
   );
