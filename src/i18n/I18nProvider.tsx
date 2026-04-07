@@ -1,11 +1,9 @@
 "use client";
 
-import { createContext, useEffect, useState } from "react";
+import { createContext, useEffect, useRef, useState } from "react";
 
-import { availableLocales, type Locale, type TranslationSchema, translations } from "@/locales";
-
-const LOCALE_STORAGE_KEY = "locale";
-const DEFAULT_LOCALE: Locale = "en";
+import { DEFAULT_LOCALE, isLocale, LOCALE_COOKIE_NAME, LOCALE_STORAGE_KEY } from "@/i18n/locale";
+import { type Locale, type TranslationSchema, translations } from "@/locales";
 
 type Primitive = string | number | boolean | null;
 
@@ -27,10 +25,6 @@ export type I18nContextValue = {
 
 export const I18nContext = createContext<I18nContextValue | undefined>(undefined);
 
-function isLocale(value: string): value is Locale {
-  return (availableLocales as readonly string[]).includes(value);
-}
-
 function getTranslationValue(locale: Locale, key: string): string {
   const result = key
     .split(".")
@@ -45,24 +39,67 @@ function getTranslationValue(locale: Locale, key: string): string {
   return typeof result === "string" ? result : key;
 }
 
-export function I18nProvider({ children }: { children: React.ReactNode }) {
-  const [locale, setLocaleState] = useState<Locale>(DEFAULT_LOCALE);
+function getCookieLocale() {
+  const cookieValue = document.cookie
+    .split("; ")
+    .find((entry) => entry.startsWith(`${LOCALE_COOKIE_NAME}=`))
+    ?.split("=")[1];
+
+  if (!cookieValue) {
+    return undefined;
+  }
+
+  const decodedValue = decodeURIComponent(cookieValue);
+  return isLocale(decodedValue) ? decodedValue : undefined;
+}
+
+function getStoredLocale() {
+  const storedLocale = window.localStorage.getItem(LOCALE_STORAGE_KEY);
+  return storedLocale && isLocale(storedLocale) ? storedLocale : undefined;
+}
+
+function persistLocale(locale: Locale) {
+  window.localStorage.setItem(LOCALE_STORAGE_KEY, locale);
+  document.cookie = `${LOCALE_COOKIE_NAME}=${encodeURIComponent(locale)}; Path=/; Max-Age=31536000; SameSite=Lax`;
+  document.documentElement.lang = locale;
+}
+
+export function I18nProvider({
+  children,
+  initialLocale = DEFAULT_LOCALE,
+}: {
+  children: React.ReactNode;
+  initialLocale?: Locale;
+}) {
+  const [locale, setLocaleState] = useState<Locale>(initialLocale);
+  const hasReconciled = useRef(false);
 
   useEffect(() => {
-    const storedLocale = window.localStorage.getItem(LOCALE_STORAGE_KEY);
-
-    if (storedLocale && isLocale(storedLocale)) {
-      setLocaleState(storedLocale);
+    if (hasReconciled.current) {
+      return;
     }
-  }, []);
+
+    hasReconciled.current = true;
+
+    const resolvedLocale =
+      getCookieLocale() ?? getStoredLocale() ?? initialLocale ?? DEFAULT_LOCALE;
+
+    if (resolvedLocale !== locale) {
+      setLocaleState(resolvedLocale);
+      return;
+    }
+
+    persistLocale(resolvedLocale);
+  }, [initialLocale, locale]);
 
   useEffect(() => {
-    window.localStorage.setItem(LOCALE_STORAGE_KEY, locale);
-    document.documentElement.lang = locale;
+    persistLocale(locale);
   }, [locale]);
 
   const setLocale = (nextLocale: Locale) => {
-    setLocaleState(nextLocale);
+    if (nextLocale !== locale) {
+      setLocaleState(nextLocale);
+    }
   };
 
   const t = (key: TranslationKey | string) => getTranslationValue(locale, key);
