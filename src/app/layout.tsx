@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 
+import { I18nProvider } from "@/i18n/I18nProvider";
+
 import "./globals.css";
 
 export const metadata: Metadata = {
   title: "CardLearner",
-  description: "Mobile-first language learning MVP scaffold built with Next.js.",
+  description: "CardLearner helps you build vocabulary lists and review them with focused study sessions.",
 };
 
 export default function RootLayout({
@@ -14,7 +16,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="bg-background font-sans text-foreground antialiased">{children}</body>
+      <body className="bg-background font-sans text-foreground antialiased">
+        <I18nProvider>{children}</I18nProvider>
+      </body>
     </html>
   );
 }

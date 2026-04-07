@@ -14,36 +14,39 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "@/i18n/useTranslation";
 
 function ConfirmDeleteButton() {
+  const { t } = useTranslation();
   const { pending } = useFormStatus();
 
   return (
     <Button type="submit" variant="destructive" className="w-full sm:w-auto" disabled={pending}>
-      {pending ? "Deleting..." : "Delete list"}
+      {pending ? t("lists.deletePending") : t("lists.deleteList")}
     </Button>
   );
 }
 
 export function DeleteListDialog({ listId, listName }: { listId: string; listName: string }) {
+  const { t } = useTranslation();
   const deleteAction = deleteListAction.bind(null, listId);
 
   return (
-    <AlertDialog>
+      <AlertDialog>
       <AlertDialogTrigger asChild>
         <Button variant="destructive" className="w-full sm:w-auto">
-          Delete
+          {t("common.delete")}
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Delete this list?</AlertDialogTitle>
+          <AlertDialogTitle>{t("lists.deleteDialogTitle")}</AlertDialogTitle>
           <AlertDialogDescription>
-            {`"${listName}" and all of its items will be permanently removed. This action cannot be undone.`}
+            {`"${listName}" ${t("lists.deleteDialogDescriptionSuffix")}`}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
           <form action={deleteAction}>
             <ConfirmDeleteButton />
           </form>

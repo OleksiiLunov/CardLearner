@@ -1,5 +1,9 @@
+"use client";
+
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
+
+import { useTranslation } from "@/i18n/useTranslation";
 
 export function ListSummaryCard({
   href,
@@ -10,6 +14,8 @@ export function ListSummaryCard({
   name: string;
   itemCount: number;
 }) {
+  const { t } = useTranslation();
+
   return (
     <Link
       href={href}
@@ -19,14 +25,15 @@ export function ListSummaryCard({
         <div className="min-w-0 space-y-2">
           <h2 className="text-lg font-semibold tracking-tight text-foreground">{name}</h2>
           <p className="text-sm leading-6 text-muted-foreground">
-            {itemCount} item{itemCount === 1 ? "" : "s"} in this collection.
+            {itemCount} {itemCount === 1 ? t("common.item") : t("common.items")}{" "}
+            {t("lists.inThisCollection")}
           </p>
         </div>
         <span className="shrink-0 rounded-full bg-secondary p-2.5 text-secondary-foreground transition-colors duration-200 group-hover:bg-accent">
           <ChevronRight className="size-4 transition-transform duration-200 group-hover:translate-x-0.5" />
         </span>
       </div>
-      <p className="mt-6 text-sm font-medium text-foreground/90">View details</p>
+      <p className="mt-6 text-sm font-medium text-foreground/90">{t("lists.viewDetails")}</p>
     </Link>
   );
 }

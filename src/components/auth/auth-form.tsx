@@ -5,6 +5,7 @@ import { useActionState } from "react";
 import { useFormStatus } from "react-dom";
 
 import type { AuthActionState } from "@/app/actions/auth";
+import { useTranslation } from "@/i18n/useTranslation";
 
 type AuthFormProps = {
   mode: "login" | "signup";
@@ -13,7 +14,7 @@ type AuthFormProps = {
     formData: FormData,
   ) => Promise<AuthActionState>;
   next?: string;
-  initialMessage?: string;
+  initialMessageKey?: string;
 };
 
 const initialState: AuthActionState = {};
@@ -32,7 +33,8 @@ function SubmitButton({ label, pendingLabel }: { label: string; pendingLabel: st
   );
 }
 
-export function AuthForm({ mode, action, next, initialMessage }: AuthFormProps) {
+export function AuthForm({ mode, action, next, initialMessageKey }: AuthFormProps) {
+  const { t } = useTranslation();
   const [state, formAction] = useActionState(action, initialState);
   const isLogin = mode === "login";
   const alternatePath = isLogin ? "/signup" : "/login";
@@ -42,16 +44,16 @@ export function AuthForm({ mode, action, next, initialMessage }: AuthFormProps) 
     <section className="space-y-6 rounded-[2rem] border border-border bg-card/90 p-6 shadow-sm backdrop-blur">
       <div className="space-y-3">
         <span className="inline-flex rounded-full bg-secondary px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-secondary-foreground">
-          {isLogin ? "Login" : "Signup"}
+          {isLogin ? t("auth.loginBadge") : t("auth.signupBadge")}
         </span>
         <div className="space-y-2">
           <h1 className="text-3xl font-semibold tracking-tight text-balance">
-            {isLogin ? "Welcome back." : "Create your account."}
+            {isLogin ? t("auth.loginTitle") : t("auth.signupTitle")}
           </h1>
           <p className="text-sm leading-6 text-muted-foreground">
             {isLogin
-              ? "Sign in with your email and password to access your study workspace."
-              : "Create an MVP account with email and password. Social auth and onboarding can be added later."}
+              ? t("auth.loginDescription")
+              : t("auth.signupDescription")}
           </p>
         </div>
       </div>
@@ -61,7 +63,7 @@ export function AuthForm({ mode, action, next, initialMessage }: AuthFormProps) 
 
         <div className="space-y-2">
           <label htmlFor="email" className="text-sm font-medium text-foreground">
-            Email
+            {t("auth.email")}
           </label>
           <input
             id="email"
@@ -77,7 +79,7 @@ export function AuthForm({ mode, action, next, initialMessage }: AuthFormProps) 
 
         <div className="space-y-2">
           <label htmlFor="password" className="text-sm font-medium text-foreground">
-            Password
+            {t("auth.password")}
           </label>
           <input
             id="password"
@@ -86,35 +88,39 @@ export function AuthForm({ mode, action, next, initialMessage }: AuthFormProps) 
             autoComplete={isLogin ? "current-password" : "new-password"}
             required
             className="w-full rounded-[1.25rem] border border-border bg-background px-4 py-3 text-sm text-foreground outline-none ring-0 placeholder:text-muted-foreground focus:border-primary"
-            placeholder="Enter your password"
+            placeholder={t("auth.passwordPlaceholder")}
           />
         </div>
 
         {state.error ? (
           <p className="rounded-[1.25rem] border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-            {state.error}
+            {t("auth.genericError")}
+          </p>
+        ) : state.errorKey ? (
+          <p className="rounded-[1.25rem] border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+            {t(state.errorKey)}
           </p>
         ) : null}
 
-        {!state.error && (state.success || initialMessage) ? (
+        {!state.error && !state.errorKey && (state.successKey || initialMessageKey) ? (
           <p className="rounded-[1.25rem] border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
-            {state.success ?? initialMessage}
+            {t(state.successKey ?? initialMessageKey!)}
           </p>
         ) : null}
 
         <SubmitButton
-          label={isLogin ? "Log in" : "Create account"}
-          pendingLabel={isLogin ? "Logging in..." : "Creating account..."}
+          label={isLogin ? t("auth.logIn") : t("auth.createAccount")}
+          pendingLabel={isLogin ? t("auth.loggingIn") : t("auth.creatingAccount")}
         />
       </form>
 
       <p className="text-sm text-muted-foreground">
-        {isLogin ? "Need an account?" : "Already have an account?"}{" "}
+        {isLogin ? t("auth.needAccount") : t("auth.alreadyHaveAccount")}{" "}
         <Link
           href={alternateHref}
           className="font-semibold text-foreground"
         >
-          {isLogin ? "Sign up" : "Log in"}
+          {isLogin ? t("auth.signUp") : t("auth.logIn")}
         </Link>
       </p>
     </section>

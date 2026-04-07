@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "@/i18n/useTranslation";
 import type { StudyCard, StudyInitialSide, StudyOrder, StudyResultsPayload } from "@/lib/study/types";
 import { shuffleStudyCards } from "@/lib/study/utils";
 
@@ -26,6 +27,7 @@ export function StudySession({
   order,
   items,
 }: StudySessionProps) {
+  const { t } = useTranslation();
   const router = useRouter();
   const orderedItems = useMemo(
     () => (order === "random" ? shuffleStudyCards(items) : [...items]),
@@ -79,7 +81,7 @@ export function StudySession({
         <div className="flex items-center justify-between gap-3">
           <div className="space-y-1">
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-              Study Session
+              {t("study.sessionEyebrow")}
             </p>
             <h1 className="text-xl font-semibold tracking-tight text-foreground">{listName}</h1>
           </div>
@@ -99,7 +101,7 @@ export function StudySession({
         }`}
       >
         <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-          {revealed ? "Revealed" : "Tap To Reveal"}
+          {revealed ? t("study.revealed") : t("study.tapToReveal")}
         </p>
         <div className="mt-7 space-y-7">
           <p className={`text-balance font-semibold tracking-tight text-foreground transition-all duration-200 ${revealed ? "text-3xl sm:text-4xl" : "text-4xl sm:text-[2.75rem] group-hover:scale-[1.01]"}`}>
@@ -108,7 +110,7 @@ export function StudySession({
           {revealed ? (
             <div className="animate-in fade-in space-y-3 border-t border-primary/15 pt-6 duration-200">
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-                Other Side
+                {t("study.otherSide")}
               </p>
               <p className="text-balance text-2xl font-medium leading-9 text-foreground sm:text-[2rem]">
                 {visibleSecondary}
@@ -116,7 +118,7 @@ export function StudySession({
             </div>
           ) : (
             <p className="text-sm leading-6 text-muted-foreground">
-              Tap the card when you are ready to check the answer.
+              {t("study.tapReadyInstruction")}
             </p>
           )}
         </div>
@@ -125,15 +127,15 @@ export function StudySession({
       {revealed ? (
         <div className="grid grid-cols-2 gap-3">
           <Button type="button" variant="secondary" size="lg" className="w-full" onClick={() => moveNext(false)}>
-            Didnt guess
+            {t("study.didNotGuess")}
           </Button>
           <Button type="button" size="lg" className="w-full" onClick={() => moveNext(true)}>
-            Guessed
+            {t("study.guessed")}
           </Button>
         </div>
       ) : (
         <p className="text-center text-sm leading-6 text-muted-foreground">
-          Reveal the card to record whether you got it right.
+          {t("study.recordAnswerPrompt")}
         </p>
       )}
     </div>

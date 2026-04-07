@@ -14,7 +14,12 @@ import { getCurrentUser } from "@/lib/supabase/session";
 
 export type ListFormState = {
   formError?: string;
+  formErrorKey?: string;
   fieldErrors?: {
+    name?: string;
+    rawItems?: string;
+  };
+  fieldErrorKeys?: {
     name?: string;
     rawItems?: string;
   };
@@ -44,19 +49,20 @@ function validateListInput(formData: FormData): {
   rawItems: string;
   ignoredLineCount: number;
   items: ReturnType<typeof parseListItemsFromMultilineInput>["items"];
+  fieldErrorKeys?: ListFormState["fieldErrorKeys"];
   fieldErrors?: ListFormState["fieldErrors"];
 } {
   const name = getField(formData, "name");
   const rawItems = String(formData.get("rawItems") ?? "");
   const parsed = parseListItemsFromMultilineInput(rawItems);
-  const fieldErrors: NonNullable<ListFormState["fieldErrors"]> = {};
+  const fieldErrorKeys: NonNullable<ListFormState["fieldErrorKeys"]> = {};
 
   if (!name) {
-    fieldErrors.name = "List name is required.";
+    fieldErrorKeys.name = "lists.nameRequired";
   }
 
   if (parsed.items.length === 0) {
-    fieldErrors.rawItems = "Add at least one valid item using the format front % back.";
+    fieldErrorKeys.rawItems = "lists.itemsRequired";
   }
 
   return {
@@ -64,17 +70,19 @@ function validateListInput(formData: FormData): {
     rawItems,
     items: parsed.items,
     ignoredLineCount: parsed.ignoredLineCount,
-    fieldErrors: Object.keys(fieldErrors).length > 0 ? fieldErrors : undefined,
+    fieldErrorKeys: Object.keys(fieldErrorKeys).length > 0 ? fieldErrorKeys : undefined,
   };
 }
 
 function buildErrorState(
   input: ReturnType<typeof validateListInput>,
   formError?: string,
+  formErrorKey?: string,
 ): ListFormState {
   return {
     formError,
-    fieldErrors: input.fieldErrors,
+    formErrorKey,
+    fieldErrorKeys: input.fieldErrorKeys,
     ignoredLineCount: input.ignoredLineCount,
     values: {
       name: input.name,
@@ -90,7 +98,7 @@ export async function createListAction(
   const user = await requireAuthenticatedUser();
   const input = validateListInput(formData);
 
-  if (input.fieldErrors) {
+  if (input.fieldErrorKeys) {
     return buildErrorState(input);
   }
 
@@ -103,7 +111,7 @@ export async function createListAction(
       items: input.items,
     });
   } catch {
-    return buildErrorState(input, "Unable to create the list right now. Please try again.");
+    return buildErrorState(input, undefined, "lists.createError");
   }
 
   revalidatePath("/lists");
@@ -118,7 +126,7 @@ export async function updateListAction(
   const user = await requireAuthenticatedUser();
   const input = validateListInput(formData);
 
-  if (input.fieldErrors) {
+  if (input.fieldErrorKeys) {
     return buildErrorState(input);
   }
 
@@ -132,7 +140,7 @@ export async function updateListAction(
       items: input.items,
     });
   } catch {
-    return buildErrorState(input, "Unable to save changes right now. Please try again.");
+    return buildErrorState(input, undefined, "lists.updateError");
   }
 
   if (!updatedList) {

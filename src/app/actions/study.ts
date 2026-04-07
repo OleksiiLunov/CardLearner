@@ -9,6 +9,7 @@ import type { StudyCard } from "@/lib/study/types";
 
 export type FailedListActionState = {
   error?: string;
+  errorKey?: string;
   values?: {
     name: string;
     itemsJson: string;
@@ -55,7 +56,7 @@ export async function createFailedItemsListAction(
 
   if (!name) {
     return {
-      error: "New list name is required.",
+      errorKey: "results.newListNameRequired",
       values: {
         name,
         itemsJson,
@@ -65,7 +66,7 @@ export async function createFailedItemsListAction(
 
   if (!failedItems || failedItems.length === 0) {
     return {
-      error: "There are no failed items available to save.",
+      errorKey: "results.noFailedItems",
       values: {
         name,
         itemsJson,

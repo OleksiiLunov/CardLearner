@@ -1,5 +1,6 @@
 import { loginAction } from "@/app/actions/auth";
 import { AuthForm } from "@/components/auth/auth-form";
+import { getSafeAuthMessageKey } from "@/lib/auth/messages";
 
 type LoginPageProps = {
   searchParams: Promise<{
@@ -16,7 +17,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
       mode="login"
       action={loginAction}
       next={params.next}
-      initialMessage={params.message}
+      initialMessageKey={getSafeAuthMessageKey(params.message)}
     />
   );
 }

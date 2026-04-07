@@ -1,3 +1,7 @@
+"use client";
+
+import { useTranslation } from "@/i18n/useTranslation";
+
 type AuthCardProps = {
   eyebrow: string;
   title: string;
@@ -6,6 +10,8 @@ type AuthCardProps = {
 };
 
 export function AuthCard({ eyebrow, title, description, footer }: AuthCardProps) {
+  const { t } = useTranslation();
+
   return (
     <section className="space-y-6 rounded-[2rem] border border-border bg-card/85 p-6 shadow-sm backdrop-blur">
       <div className="space-y-3">
@@ -18,7 +24,7 @@ export function AuthCard({ eyebrow, title, description, footer }: AuthCardProps)
         </div>
       </div>
       <div className="rounded-[1.5rem] border border-dashed border-border bg-background/80 p-4 text-sm text-muted-foreground">
-        UI-only placeholder. Inputs and submission flows are intentionally omitted.
+        {t("ui.placeholderCard")}
       </div>
       {footer}
     </section>

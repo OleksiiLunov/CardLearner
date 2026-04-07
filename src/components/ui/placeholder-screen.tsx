@@ -1,4 +1,8 @@
+"use client";
+
 import Link from "next/link";
+
+import { useTranslation } from "@/i18n/useTranslation";
 
 type PlaceholderScreenProps = {
   badge: string;
@@ -16,6 +20,8 @@ export function PlaceholderScreen({
   description,
   primaryAction,
 }: PlaceholderScreenProps) {
+  const { t } = useTranslation();
+
   return (
     <section className="space-y-6 rounded-[2rem] border border-border bg-card/80 p-6 shadow-sm backdrop-blur">
       <div className="space-y-4">
@@ -29,7 +35,7 @@ export function PlaceholderScreen({
       </div>
 
       <div className="rounded-[1.5rem] border border-dashed border-border bg-background/70 p-4 text-sm text-muted-foreground">
-        Placeholder-only route. Business logic, persistence, and form/session state have intentionally been left out.
+        {t("ui.placeholderScreen")}
       </div>
 
       {primaryAction ? (

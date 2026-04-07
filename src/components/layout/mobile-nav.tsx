@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { BookOpen, LibraryBig, SquarePen } from "lucide-react";
 
+import { useTranslation } from "@/i18n/useTranslation";
 import { cn } from "@/lib/utils";
 
 const navItems = [
@@ -28,6 +29,7 @@ const navItems = [
 ];
 
 export function MobileNav() {
+  const { t } = useTranslation();
   const pathname = usePathname();
 
   return (
@@ -47,7 +49,13 @@ export function MobileNav() {
                 )}
               >
                 <Icon className="size-4" />
-                <span>{item.label}</span>
+                <span>
+                  {item.href === "/lists"
+                    ? t("navigation.lists")
+                    : item.href === "/study/setup"
+                      ? t("navigation.study")
+                      : t("navigation.create")}
+                </span>
               </Link>
             </li>
           );

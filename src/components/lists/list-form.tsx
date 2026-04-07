@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { useTranslation } from "@/i18n/useTranslation";
 
 type ListFormProps = {
   mode: "create" | "edit";
@@ -21,16 +22,24 @@ type ListFormProps = {
 const initialState: ListFormState = {};
 
 function SubmitButton({ mode }: { mode: "create" | "edit" }) {
+  const { t } = useTranslation();
   const { pending } = useFormStatus();
 
   return (
     <Button type="submit" size="lg" className="w-full" disabled={pending}>
-      {pending ? (mode === "create" ? "Creating list..." : "Saving changes...") : mode === "create" ? "Create list" : "Save changes"}
+      {pending
+        ? mode === "create"
+          ? t("lists.createPending")
+          : t("lists.savePending")
+        : mode === "create"
+          ? t("lists.createList")
+          : t("lists.saveChanges")}
     </Button>
   );
 }
 
 export function ListForm({ mode, action, initialValues }: ListFormProps) {
+  const { t } = useTranslation();
   const [state, formAction] = useActionState(action, initialState);
   const values = state.values ?? initialValues ?? { name: "", rawItems: "" };
   const formKey = `${mode}:${values.name}:${values.rawItems}`;
@@ -39,38 +48,39 @@ export function ListForm({ mode, action, initialValues }: ListFormProps) {
     <section className="space-y-7 rounded-[2.25rem] border border-border bg-card/85 p-5 shadow-sm backdrop-blur sm:p-6">
       <div className="space-y-3">
         <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-          {mode === "create" ? "Create List" : "Edit List"}
+          {mode === "create" ? t("lists.createEyebrow") : t("lists.editEyebrow")}
         </p>
         <h1 className="text-3xl font-semibold tracking-tight text-balance">
-          {mode === "create" ? "Create a new list." : "Edit your list."}
+          {mode === "create" ? t("lists.createHeading") : t("lists.editHeading")}
         </h1>
         <p className="max-w-md text-sm leading-6 text-muted-foreground">
-          Add one card per line using the format <span className="font-semibold text-foreground">front % back</span>.
+          {t("lists.formatDescriptionPrefix")}{" "}
+          <span className="font-semibold text-foreground">front % back</span>.
         </p>
       </div>
 
       <form key={formKey} action={formAction} className="space-y-6">
         <div className="space-y-2.5">
-          <Label htmlFor="name">List name</Label>
+          <Label htmlFor="name">{t("lists.listName")}</Label>
           <Input
             id="name"
             name="name"
             required
-            placeholder="Spanish basics"
+            placeholder={t("lists.namePlaceholder")}
             defaultValue={values.name}
           />
-          {state.fieldErrors?.name ? (
+          {state.fieldErrors?.name || state.fieldErrorKeys?.name ? (
             <p className="rounded-[1rem] border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
-              {state.fieldErrors.name}
+              {state.fieldErrors?.name ?? t(state.fieldErrorKeys!.name!)}
             </p>
           ) : null}
         </div>
 
         <div className="space-y-2.5">
           <div className="space-y-1.5">
-            <Label htmlFor="rawItems">Items</Label>
+            <Label htmlFor="rawItems">{t("lists.items")}</Label>
             <p className="text-sm text-muted-foreground">
-              Example:
+              {t("lists.exampleLabel")}
               <span className="ml-2 font-medium text-foreground">hola % hello</span>
             </p>
           </div>
@@ -81,25 +91,25 @@ export function ListForm({ mode, action, initialValues }: ListFormProps) {
             defaultValue={values.rawItems}
             placeholder={"hola % hello\nadios % goodbye"}
           />
-          <p className="text-sm text-muted-foreground">
-            Empty lines and invalid rows are ignored. Valid rows keep the entered order.
-          </p>
-          {state.fieldErrors?.rawItems ? (
+          <p className="text-sm text-muted-foreground">{t("lists.itemsHelp")}</p>
+          {state.fieldErrors?.rawItems || state.fieldErrorKeys?.rawItems ? (
             <p className="rounded-[1rem] border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
-              {state.fieldErrors.rawItems}
+              {state.fieldErrors?.rawItems ?? t(state.fieldErrorKeys!.rawItems!)}
             </p>
           ) : null}
         </div>
 
         {typeof state.ignoredLineCount === "number" && state.ignoredLineCount > 0 ? (
           <p className="rounded-[1.25rem] border border-amber-200 bg-amber-50 px-4 py-3 text-sm leading-6 text-amber-700">
-            {state.ignoredLineCount} line{state.ignoredLineCount === 1 ? "" : "s"} will be ignored because they are empty or not in the expected format.
+            {state.ignoredLineCount}{" "}
+            {state.ignoredLineCount === 1 ? t("common.line") : t("common.lines")}{" "}
+            {t("lists.ignoredLinesSuffix")}
           </p>
         ) : null}
 
-        {state.formError ? (
+        {state.formError || state.formErrorKey ? (
           <p className="rounded-[1.25rem] border border-red-200 bg-red-50 px-4 py-3 text-sm leading-6 text-red-700">
-            {state.formError}
+            {state.formError ?? t(state.formErrorKey!)}
           </p>
         ) : null}
 

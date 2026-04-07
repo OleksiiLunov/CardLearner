@@ -9,6 +9,7 @@ import { createFailedItemsListAction } from "@/app/actions/study";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useTranslation } from "@/i18n/useTranslation";
 import type { StudyResultsPayload } from "@/lib/study/types";
 
 type StudyResultsProps = {
@@ -23,11 +24,12 @@ function getResultsStorageKey(listId: string) {
 }
 
 export function StudyResults({ listId, listName }: StudyResultsProps) {
+  const { t } = useTranslation();
   const searchParams = useSearchParams();
   const [results, setResults] = useState<StudyResultsPayload | null>(null);
   const [loaded, setLoaded] = useState(false);
   const [state, formAction] = useActionState(createFailedItemsListAction, initialState);
-  const defaultFailedName = useMemo(() => `${listName} - Failed Items`, [listName]);
+  const defaultFailedName = useMemo(() => `${listName} - ${t("results.failedItemsSuffix")}`, [listName, t]);
 
   useEffect(() => {
     const storedValue = sessionStorage.getItem(getResultsStorageKey(listId));
@@ -52,7 +54,7 @@ export function StudyResults({ listId, listName }: StudyResultsProps) {
   if (!loaded) {
     return (
       <section className="rounded-[2rem] border border-border bg-card/80 p-6 text-center shadow-sm backdrop-blur">
-        <p className="text-sm text-muted-foreground">Loading results...</p>
+        <p className="text-sm text-muted-foreground">{t("results.loading")}</p>
       </section>
     );
   }
@@ -60,12 +62,12 @@ export function StudyResults({ listId, listName }: StudyResultsProps) {
   if (!results) {
     return (
       <section className="space-y-4 rounded-[2rem] border border-border bg-card/80 p-6 text-center shadow-sm backdrop-blur">
-        <h1 className="text-2xl font-semibold tracking-tight text-foreground">No study results found</h1>
+        <h1 className="text-2xl font-semibold tracking-tight text-foreground">{t("results.noResultsTitle")}</h1>
         <p className="text-sm leading-6 text-muted-foreground">
-          Start a new session from the setup page to generate results for this list.
+          {t("results.noResultsDescription")}
         </p>
         <Button asChild className="w-full">
-          <Link href={`/study/setup?listId=${encodeURIComponent(listId)}`}>Back to setup</Link>
+          <Link href={`/study/setup?listId=${encodeURIComponent(listId)}`}>{t("results.backToSetup")}</Link>
         </Button>
       </section>
     );
@@ -82,37 +84,37 @@ export function StudyResults({ listId, listName }: StudyResultsProps) {
       <section className="space-y-6 rounded-[2.25rem] border border-border bg-card/80 p-5 shadow-sm backdrop-blur sm:p-6">
         <div className="space-y-2.5">
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-            Study Results
+            {t("results.eyebrow")}
           </p>
           <h1 className="text-3xl font-semibold tracking-tight text-balance text-foreground">
             {results.listName}
           </h1>
           <p className="text-sm text-muted-foreground">
-            {fromSetup ? "You completed a focused flashcard review session." : "Session summary."}
+            {fromSetup ? t("results.completedDescription") : t("results.sessionSummary")}
           </p>
         </div>
 
         <div className="grid grid-cols-3 gap-3">
           <div className="rounded-[1.5rem] bg-background/90 p-4 text-center shadow-sm">
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Total</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">{t("results.total")}</p>
             <p className="mt-2 text-2xl font-semibold text-foreground">{results.totalItems}</p>
           </div>
           <div className="rounded-[1.5rem] bg-background/90 p-4 text-center shadow-sm">
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Guessed</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">{t("results.guessed")}</p>
             <p className="mt-2 text-2xl font-semibold text-foreground">{results.guessedCount}</p>
           </div>
           <div className="rounded-[1.5rem] border border-red-200 bg-red-50 p-4 text-center shadow-sm">
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-red-600">Failed</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-red-600">{t("results.failed")}</p>
             <p className="mt-2 text-2xl font-semibold text-red-700">{results.failedCount}</p>
           </div>
         </div>
 
         <div className="grid gap-3">
           <Button asChild size="lg" className="w-full">
-            <Link href={studyAgainHref}>Study again</Link>
+            <Link href={studyAgainHref}>{t("results.studyAgain")}</Link>
           </Button>
           <Button asChild variant="secondary" size="lg" className="w-full">
-            <Link href="/lists">Back to lists</Link>
+            <Link href="/lists">{t("results.backToLists")}</Link>
           </Button>
         </div>
       </section>
@@ -121,10 +123,10 @@ export function StudyResults({ listId, listName }: StudyResultsProps) {
         <section className="space-y-5 rounded-[2.25rem] border border-border bg-card/80 p-5 shadow-sm backdrop-blur sm:p-6">
           <div className="space-y-2.5">
             <h2 className="text-xl font-semibold tracking-tight text-foreground">
-              Create a list from failed items
+              {t("results.createFailedListTitle")}
             </h2>
             <p className="text-sm leading-6 text-muted-foreground">
-              Save only the cards you missed as a new list for focused review.
+              {t("results.createFailedListDescription")}
             </p>
           </div>
 
@@ -132,18 +134,18 @@ export function StudyResults({ listId, listName }: StudyResultsProps) {
             <input type="hidden" name="itemsJson" value={itemsJson} />
 
             <div className="space-y-2.5">
-              <Label htmlFor="name">New list name</Label>
+              <Label htmlFor="name">{t("results.newListName")}</Label>
               <Input id="name" name="name" defaultValue={prefillName} required />
             </div>
 
-            {state.error ? (
+            {state.error || state.errorKey ? (
               <p className="rounded-[1.25rem] border border-red-200 bg-red-50 px-4 py-3 text-sm leading-6 text-red-700">
-                {state.error}
+                {state.error ?? t(state.errorKey!)}
               </p>
             ) : null}
 
             <Button type="submit" size="lg" className="w-full">
-              Create list from failed items
+              {t("results.createFailedList")}
             </Button>
           </form>
         </section>

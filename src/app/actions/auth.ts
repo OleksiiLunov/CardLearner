@@ -4,11 +4,14 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 
+import { getSafeAuthMessageKey } from "@/lib/auth/messages";
 import { createClient } from "@/lib/supabase/server";
 
 export type AuthActionState = {
   error?: string;
   success?: string;
+  errorKey?: string;
+  successKey?: string;
   email?: string;
 };
 
@@ -16,7 +19,9 @@ function getField(formData: FormData, key: string) {
   return String(formData.get(key) ?? "").trim();
 }
 
-function validateCredentials(formData: FormData) {
+function validateCredentials(
+  formData: FormData,
+): { email: string; password: string } | { email: string; password: string; errorKey: string } {
   const email = getField(formData, "email");
   const password = getField(formData, "password");
 
@@ -24,7 +29,7 @@ function validateCredentials(formData: FormData) {
     return {
       email,
       password,
-      error: "Email and password are required.",
+      errorKey: "auth.credentialsRequired",
     };
   }
 
@@ -43,15 +48,58 @@ function getSafeRedirectPath(nextValue: string) {
   return nextValue;
 }
 
+function mapAuthErrorToKey(message: string) {
+  const normalizedMessage = message.toLowerCase();
+
+  if (
+    normalizedMessage.includes("invalid login credentials") ||
+    normalizedMessage.includes("invalid credentials") ||
+    normalizedMessage.includes("email not found") ||
+    normalizedMessage.includes("invalid email or password")
+  ) {
+    return "auth.invalidCredentials";
+  }
+
+  if (normalizedMessage.includes("email not confirmed") || normalizedMessage.includes("confirm your email")) {
+    return "auth.emailNotConfirmed";
+  }
+
+  if (normalizedMessage.includes("user already registered") || normalizedMessage.includes("already registered")) {
+    return "auth.userAlreadyRegistered";
+  }
+
+  if (
+    normalizedMessage.includes("password should be at least") ||
+    normalizedMessage.includes("password is too weak") ||
+    normalizedMessage.includes("weak password")
+  ) {
+    return "auth.weakPassword";
+  }
+
+  if (
+    normalizedMessage.includes("rate limit") ||
+    normalizedMessage.includes("too many requests") ||
+    normalizedMessage.includes("too many attempts")
+  ) {
+    return "auth.tooManyRequests";
+  }
+
+  if (normalizedMessage.includes("signups not allowed") || normalizedMessage.includes("signup is disabled")) {
+    return "auth.signupDisabled";
+  }
+
+  return "auth.genericError";
+}
+
 export async function loginAction(
   _previousState: AuthActionState,
   formData: FormData,
 ): Promise<AuthActionState> {
   const validated = validateCredentials(formData);
 
-  if ("error" in validated) {
+  if ("errorKey" in validated) {
     return {
-      error: validated.error,
+      errorKey: validated.errorKey,
       email: validated.email,
     };
   }
@@ -65,7 +113,7 @@ export async function loginAction(
 
   if (error) {
     return {
-      error: error.message,
+      errorKey: mapAuthErrorToKey(error.message),
       email: validated.email,
     };
   }
@@ -80,9 +128,9 @@ export async function signupAction(
 ): Promise<AuthActionState> {
   const validated = validateCredentials(formData);
 
-  if ("error" in validated) {
+  if ("errorKey" in validated) {
     return {
-      error: validated.error,
+      errorKey: validated.errorKey,
       email: validated.email,
     };
   }
@@ -105,7 +153,7 @@ export async function signupAction(
 
   if (error) {
     return {
-      error: error.message,
+      errorKey: mapAuthErrorToKey(error.message),
       email: validated.email,
     };
   }
@@ -116,7 +164,7 @@ export async function signupAction(
   }
 
   return {
-    success: "Account created. Check your email to confirm your address, then log in.",
+    successKey: getSafeAuthMessageKey("auth.accountCreated"),
     email: validated.email,
   };
 }

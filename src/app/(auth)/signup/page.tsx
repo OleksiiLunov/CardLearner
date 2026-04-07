@@ -1,5 +1,6 @@
 import { signupAction } from "@/app/actions/auth";
 import { AuthForm } from "@/components/auth/auth-form";
+import { getSafeAuthMessageKey } from "@/lib/auth/messages";
 
 type SignupPageProps = {
   searchParams: Promise<{
@@ -16,7 +17,7 @@ export default async function SignupPage({ searchParams }: SignupPageProps) {
       mode="signup"
       action={signupAction}
       next={params.next}
-      initialMessage={params.message}
+      initialMessageKey={getSafeAuthMessageKey(params.message)}
     />
   );
 }
