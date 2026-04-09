@@ -18,6 +18,15 @@ function isStudyCard(value: unknown): value is StudyCard {
 }
 
 function isTemporaryStudyPayload(value: unknown): value is TemporaryStudyPayload {
+  const source =
+    typeof value === "object" &&
+    value !== null &&
+    "source" in value &&
+    typeof value.source === "object" &&
+    value.source !== null
+      ? (value.source as Record<string, unknown>)
+      : null;
+
   return (
     typeof value === "object" &&
     value !== null &&
@@ -28,11 +37,9 @@ function isTemporaryStudyPayload(value: unknown): value is TemporaryStudyPayload
     "items" in value &&
     Array.isArray(value.items) &&
     value.items.every(isStudyCard) &&
-    "source" in value &&
-    typeof value.source === "object" &&
-    value.source !== null &&
-    typeof value.source.listId === "string" &&
-    typeof value.source.listName === "string"
+    source !== null &&
+    typeof source.listId === "string" &&
+    typeof source.listName === "string"
   );
 }
 

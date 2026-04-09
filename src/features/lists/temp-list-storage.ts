@@ -14,6 +14,15 @@ function isTemporaryListItem(value: unknown): value is TemporaryListItem {
 }
 
 function isTemporaryFailedListPayload(value: unknown): value is TemporaryFailedListPayload {
+  const source =
+    typeof value === "object" &&
+    value !== null &&
+    "source" in value &&
+    typeof value.source === "object" &&
+    value.source !== null
+      ? (value.source as Record<string, unknown>)
+      : null;
+
   return (
     typeof value === "object" &&
     value !== null &&
@@ -27,13 +36,11 @@ function isTemporaryFailedListPayload(value: unknown): value is TemporaryFailedL
     "itemCount" in value &&
     typeof value.itemCount === "number" &&
     value.itemCount === value.items.length &&
-    "source" in value &&
-    typeof value.source === "object" &&
-    value.source !== null &&
-    typeof value.source.listId === "string" &&
-    typeof value.source.listName === "string" &&
-    (value.source.initialSide === "front" || value.source.initialSide === "back") &&
-    (value.source.order === "original" || value.source.order === "random")
+    source !== null &&
+    typeof source.listId === "string" &&
+    typeof source.listName === "string" &&
+    (source.initialSide === "front" || source.initialSide === "back") &&
+    (source.order === "original" || source.order === "random")
   );
 }
 

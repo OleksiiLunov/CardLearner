@@ -46,6 +46,15 @@ function getField(formData: FormData, key: string) {
 }
 
 function isTemporaryFailedListPayload(value: unknown): value is TemporaryFailedListPayload {
+  const source =
+    typeof value === "object" &&
+    value !== null &&
+    "source" in value &&
+    typeof value.source === "object" &&
+    value.source !== null
+      ? (value.source as Record<string, unknown>)
+      : null;
+
   return (
     typeof value === "object" &&
     value !== null &&
@@ -64,11 +73,9 @@ function isTemporaryFailedListPayload(value: unknown): value is TemporaryFailedL
         typeof item.back === "string" &&
         typeof item.position === "number",
     ) &&
-    "source" in value &&
-    typeof value.source === "object" &&
-    value.source !== null &&
-    typeof value.source.listId === "string" &&
-    typeof value.source.listName === "string"
+    source !== null &&
+    typeof source.listId === "string" &&
+    typeof source.listName === "string"
   );
 }
 
