@@ -9,6 +9,7 @@ import {
   getListByIdForUser,
   updateListWithItems,
 } from "@/lib/data/lists";
+import type { TemporaryFailedListPayload } from "@/features/lists/types";
 import { parseListItemsFromMultilineInput } from "@/lib/lists/parse-list-items";
 import { getCurrentUser } from "@/lib/supabase/session";
 
@@ -30,8 +31,45 @@ export type ListFormState = {
   ignoredLineCount?: number;
 };
 
+export type SaveTemporaryFailedListResult =
+  | {
+      success: true;
+      listId: string;
+    }
+  | {
+      success: false;
+      errorKey: string;
+    };
+
 function getField(formData: FormData, key: string) {
   return String(formData.get(key) ?? "").trim();
+}
+
+function isTemporaryFailedListPayload(value: unknown): value is TemporaryFailedListPayload {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    "kind" in value &&
+    value.kind === "failed-items" &&
+    "title" in value &&
+    typeof value.title === "string" &&
+    "items" in value &&
+    Array.isArray(value.items) &&
+    value.items.every(
+      (item) =>
+        typeof item === "object" &&
+        item !== null &&
+        typeof item.id === "string" &&
+        typeof item.front === "string" &&
+        typeof item.back === "string" &&
+        typeof item.position === "number",
+    ) &&
+    "source" in value &&
+    typeof value.source === "object" &&
+    value.source !== null &&
+    typeof value.source.listId === "string" &&
+    typeof value.source.listName === "string"
+  );
 }
 
 async function requireAuthenticatedUser() {
@@ -116,6 +154,52 @@ export async function createListAction(
 
   revalidatePath("/lists");
   redirect(`/lists/${list.id}?created=1`);
+}
+
+export async function saveTemporaryFailedListAction(
+  payload: TemporaryFailedListPayload,
+): Promise<SaveTemporaryFailedListResult> {
+  const user = await requireAuthenticatedUser();
+
+  if (!isTemporaryFailedListPayload(payload) || payload.items.length === 0) {
+    return {
+      success: false,
+      errorKey: "lists.tempFailedSaveError",
+    };
+  }
+
+  const name = payload.title.trim();
+
+  if (!name) {
+    return {
+      success: false,
+      errorKey: "lists.tempFailedSaveError",
+    };
+  }
+
+  try {
+    const list = await createListWithItems({
+      userId: user.id,
+      name,
+      items: payload.items.map((item, index) => ({
+        front: item.front,
+        back: item.back,
+        position: item.position ?? index,
+      })),
+    });
+
+    revalidatePath("/lists");
+
+    return {
+      success: true,
+      listId: list.id,
+    };
+  } catch {
+    return {
+      success: false,
+      errorKey: "lists.tempFailedSaveError",
+    };
+  }
 }
 
 export async function updateListAction(

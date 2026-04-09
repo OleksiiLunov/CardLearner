@@ -1,38 +1,40 @@
 "use client";
 
-import { useActionState, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
-import type { FailedListActionState } from "@/app/actions/study";
-import { createFailedItemsListAction } from "@/app/actions/study";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { saveTemporaryFailedList } from "@/features/lists/temp-list-storage";
+import type { TemporaryFailedListPayload } from "@/features/lists/types";
 import { useTranslation } from "@/i18n/useTranslation";
+import { getStudyResultsStorageKey } from "@/lib/study/storage";
 import type { StudyResultsPayload } from "@/lib/study/types";
 
 type StudyResultsProps = {
   listId: string;
   listName: string;
+  resultsStorageKey?: string;
+  studyAgainHref?: string;
+  missingBackHref?: string;
 };
 
-const initialState: FailedListActionState = {};
-
-function getResultsStorageKey(listId: string) {
-  return `study-results:${listId}`;
-}
-
-export function StudyResults({ listId, listName }: StudyResultsProps) {
+export function StudyResults({
+  listId,
+  listName,
+  resultsStorageKey = getStudyResultsStorageKey(listId),
+  studyAgainHref = `/study/setup?listId=${encodeURIComponent(listId)}`,
+  missingBackHref = `/study/setup?listId=${encodeURIComponent(listId)}`,
+}: StudyResultsProps) {
   const { t } = useTranslation();
+  const router = useRouter();
   const searchParams = useSearchParams();
   const [results, setResults] = useState<StudyResultsPayload | null>(null);
   const [loaded, setLoaded] = useState(false);
-  const [state, formAction] = useActionState(createFailedItemsListAction, initialState);
-  const defaultFailedName = useMemo(() => `${listName} - ${t("results.failedItemsSuffix")}`, [listName, t]);
+  const defaultFailedName = useMemo(() => `${listName} ${t("results.failedItemsSuffix")}`.trim(), [listName, t]);
 
   useEffect(() => {
-    const storedValue = sessionStorage.getItem(getResultsStorageKey(listId));
+    const storedValue = sessionStorage.getItem(resultsStorageKey);
 
     if (!storedValue) {
       setLoaded(true);
@@ -45,11 +47,11 @@ export function StudyResults({ listId, listName }: StudyResultsProps) {
         setResults(parsed);
       }
     } catch {
-      sessionStorage.removeItem(getResultsStorageKey(listId));
+      sessionStorage.removeItem(resultsStorageKey);
     } finally {
       setLoaded(true);
     }
-  }, [listId]);
+  }, [listId, resultsStorageKey]);
 
   if (!loaded) {
     return (
@@ -67,17 +69,40 @@ export function StudyResults({ listId, listName }: StudyResultsProps) {
           {t("results.noResultsDescription")}
         </p>
         <Button asChild className="w-full">
-          <Link href={`/study/setup?listId=${encodeURIComponent(listId)}`}>{t("results.backToSetup")}</Link>
+          <Link href={missingBackHref}>{t("results.backToSetup")}</Link>
         </Button>
       </section>
     );
   }
 
-  const studyAgainHref = `/study/setup?listId=${encodeURIComponent(listId)}`;
-  const itemsJson = JSON.stringify(results.failedItems);
-  const prefillName = state.values?.name ?? defaultFailedName;
   const fromSetup = searchParams.get("from");
-  const formKey = `${prefillName}:${itemsJson}`;
+
+  function handleOpenFailedItems() {
+    if (results.failedItems.length === 0) {
+      return;
+    }
+
+    const payload: TemporaryFailedListPayload = {
+      kind: "failed-items",
+      title: defaultFailedName,
+      items: results.failedItems.map((item) => ({
+        id: item.id,
+        front: item.front,
+        back: item.back,
+        position: item.position,
+      })),
+      itemCount: results.failedItems.length,
+      source: {
+        listId: results.listId,
+        listName: results.listName,
+        initialSide: results.initialSide,
+        order: results.order,
+      },
+    };
+
+    saveTemporaryFailedList(payload);
+    router.push("/lists/temp/failed");
+  }
 
   return (
     <div className="space-y-7">
@@ -123,31 +148,16 @@ export function StudyResults({ listId, listName }: StudyResultsProps) {
         <section className="space-y-5 rounded-[2.25rem] border border-border bg-card/80 p-5 shadow-sm backdrop-blur sm:p-6">
           <div className="space-y-2.5">
             <h2 className="text-xl font-semibold tracking-tight text-foreground">
-              {t("results.createFailedListTitle")}
+              {t("results.failedItemsTitle")}
             </h2>
             <p className="text-sm leading-6 text-muted-foreground">
-              {t("results.createFailedListDescription")}
+              {t("results.failedItemsDescription")}
             </p>
           </div>
 
-          <form key={formKey} action={formAction} className="space-y-4">
-            <input type="hidden" name="itemsJson" value={itemsJson} />
-
-            <div className="space-y-2.5">
-              <Label htmlFor="name">{t("results.newListName")}</Label>
-              <Input id="name" name="name" defaultValue={prefillName} required />
-            </div>
-
-            {state.error || state.errorKey ? (
-              <p className="rounded-[1.25rem] border border-red-200 bg-red-50 px-4 py-3 text-sm leading-6 text-red-700">
-                {state.error ?? t(state.errorKey!)}
-              </p>
-            ) : null}
-
-            <Button type="submit" size="lg" className="w-full">
-              {t("results.createFailedList")}
-            </Button>
-          </form>
+          <Button type="button" size="lg" className="w-full" onClick={handleOpenFailedItems}>
+            {t("results.openFailedItems")}
+          </Button>
         </section>
       ) : null}
     </div>

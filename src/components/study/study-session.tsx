@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "@/i18n/useTranslation";
+import { getStudyResultsStorageKey } from "@/lib/study/storage";
 import type { StudyCard, StudyInitialSide, StudyOrder, StudyResultsPayload } from "@/lib/study/types";
 import { shuffleStudyCards } from "@/lib/study/utils";
 
@@ -14,11 +15,9 @@ type StudySessionProps = {
   initialSide: StudyInitialSide;
   order: StudyOrder;
   items: StudyCard[];
+  resultsStorageKey?: string;
+  resultsHref?: string;
 };
-
-function getResultsStorageKey(listId: string) {
-  return `study-results:${listId}`;
-}
 
 export function StudySession({
   listId,
@@ -26,6 +25,8 @@ export function StudySession({
   initialSide,
   order,
   items,
+  resultsStorageKey = getStudyResultsStorageKey(listId),
+  resultsHref = `/study/results?listId=${encodeURIComponent(listId)}`,
 }: StudySessionProps) {
   const { t } = useTranslation();
   const router = useRouter();
@@ -55,8 +56,8 @@ export function StudySession({
       order,
     };
 
-    sessionStorage.setItem(getResultsStorageKey(listId), JSON.stringify(results));
-    router.push(`/study/results?listId=${encodeURIComponent(listId)}`);
+    sessionStorage.setItem(resultsStorageKey, JSON.stringify(results));
+    router.push(resultsHref);
   }
 
   function moveNext(didGuess: boolean) {

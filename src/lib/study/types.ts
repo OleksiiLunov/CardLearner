@@ -8,6 +8,16 @@ export type StudyCard = {
   position: number;
 };
 
+export type TemporaryStudyPayload = {
+  kind: "temp-failed";
+  title: string;
+  items: StudyCard[];
+  source: {
+    listId: string;
+    listName: string;
+  };
+};
+
 export type StudyResultsPayload = {
   listId: string;
   listName: string;

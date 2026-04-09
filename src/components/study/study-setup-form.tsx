@@ -8,15 +8,20 @@ import { Button } from "@/components/ui/button";
 type StudySetupFormProps = {
   hasItems: boolean;
   itemCount: number;
-  listId: string;
   listName: string;
+  hiddenFields: Array<{
+    name: string;
+    value: string;
+  }>;
+  backHref: string;
 };
 
 export function StudySetupForm({
   hasItems,
   itemCount,
-  listId,
   listName,
+  hiddenFields,
+  backHref,
 }: StudySetupFormProps) {
   const { t } = useTranslation();
 
@@ -38,7 +43,9 @@ export function StudySetupForm({
       </section>
 
       <form action="/study/session" className="space-y-6 rounded-[2rem] border border-border bg-card/80 p-6 shadow-sm backdrop-blur">
-        <input type="hidden" name="listId" value={listId} />
+        {hiddenFields.map((field) => (
+          <input key={`${field.name}:${field.value}`} type="hidden" name={field.name} value={field.value} />
+        ))}
 
         <fieldset className="space-y-3">
           <legend className="text-sm font-medium text-foreground">{t("study.initialSide")}</legend>
@@ -75,7 +82,7 @@ export function StudySetupForm({
             {t("study.start")}
           </Button>
           <Button asChild variant="secondary" className="w-full">
-            <Link href={`/lists/${listId}`}>{t("study.backToList")}</Link>
+            <Link href={backHref}>{t("study.backToList")}</Link>
           </Button>
         </div>
       </form>

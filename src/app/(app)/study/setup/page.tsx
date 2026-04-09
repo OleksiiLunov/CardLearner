@@ -1,18 +1,26 @@
 import { notFound, redirect } from "next/navigation";
 
 import { StudySetupForm } from "@/components/study/study-setup-form";
+import { TemporaryStudySetup } from "@/components/study/temporary-study-setup";
 import { getListByIdForUser } from "@/lib/data/lists";
+import { TEMP_FAILED_STUDY_QUERY_VALUE } from "@/lib/study/temp-study-storage";
 import { requireUser } from "@/lib/supabase/session";
 
 type StudySetupPageProps = {
   searchParams: Promise<{
     listId?: string;
+    source?: string;
   }>;
 };
 
 export default async function StudySetupPage({ searchParams }: StudySetupPageProps) {
+  const { listId, source } = await searchParams;
+
+  if (source === TEMP_FAILED_STUDY_QUERY_VALUE) {
+    return <TemporaryStudySetup />;
+  }
+
   const user = await requireUser();
-  const { listId } = await searchParams;
 
   if (!listId) {
     redirect("/lists");
@@ -30,8 +38,9 @@ export default async function StudySetupPage({ searchParams }: StudySetupPagePro
     <StudySetupForm
       hasItems={hasItems}
       itemCount={list.items.length}
-      listId={list.id}
       listName={list.name}
+      hiddenFields={[{ name: "listId", value: list.id }]}
+      backHref={`/lists/${list.id}`}
     />
   );
 }
