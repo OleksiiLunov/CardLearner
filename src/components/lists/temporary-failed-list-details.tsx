@@ -65,10 +65,15 @@ export function TemporaryFailedListDetails() {
     setSaveErrorKey(null);
 
     startSaving(async () => {
-      const result = await saveTemporaryFailedListAction({
-        ...payload,
+      const actionPayload: TemporaryFailedListPayload = {
+        kind: "failed-items",
         title: saveName,
-      });
+        items: payload.items,
+        itemCount: payload.itemCount,
+        source: payload.source,
+      };
+
+      const result = await saveTemporaryFailedListAction(actionPayload);
 
       if (!result.success) {
         setSaveErrorKey(result.errorKey);
