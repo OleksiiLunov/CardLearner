@@ -161,8 +161,6 @@
     "sessionSummary": "Session summary.",
     "studyAgain": "Study again",
     "backToLists": "Back to lists",
-    "failedItemsTitle": "Failed items",
-    "failedItemsDescription": "Open the cards you missed as a temporary list to review, study again, or save.",
     "openFailedItems": "Open temporary failed list",
     "failedItemsSuffix": "Failed"
   },

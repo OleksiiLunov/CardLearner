@@ -128,10 +128,20 @@ export function StudyResults({
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">{t("results.guessed")}</p>
             <p className="mt-2 text-2xl font-semibold text-foreground">{results.guessedCount}</p>
           </div>
-          <div className="rounded-[1.5rem] border border-red-200 bg-red-50 p-4 text-center shadow-sm">
+          <button
+            type="button"
+            onClick={handleOpenFailedItems}
+            disabled={results.failedCount === 0}
+            aria-label={results.failedCount > 0 ? t("results.openFailedItems") : undefined}
+            className={`rounded-[1.5rem] border p-4 text-center shadow-sm transition-all duration-200 ${
+              results.failedCount > 0
+                ? "cursor-pointer border-red-200 bg-red-50 hover:-translate-y-0.5 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-300/70 active:scale-[0.99]"
+                : "cursor-default border-red-100 bg-red-50/60 opacity-70"
+            }`}
+          >
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-red-600">{t("results.failed")}</p>
             <p className="mt-2 text-2xl font-semibold text-red-700">{results.failedCount}</p>
-          </div>
+          </button>
         </div>
 
         <div className="grid gap-3">
@@ -143,23 +153,6 @@ export function StudyResults({
           </Button>
         </div>
       </section>
-
-      {results.failedCount > 0 ? (
-        <section className="space-y-5 rounded-[2.25rem] border border-border bg-card/80 p-5 shadow-sm backdrop-blur sm:p-6">
-          <div className="space-y-2.5">
-            <h2 className="text-xl font-semibold tracking-tight text-foreground">
-              {t("results.failedItemsTitle")}
-            </h2>
-            <p className="text-sm leading-6 text-muted-foreground">
-              {t("results.failedItemsDescription")}
-            </p>
-          </div>
-
-          <Button type="button" size="lg" className="w-full" onClick={handleOpenFailedItems}>
-            {t("results.openFailedItems")}
-          </Button>
-        </section>
-      ) : null}
     </div>
   );
 }
