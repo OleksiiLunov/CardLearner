@@ -1,8 +1,8 @@
 "use client";
+
 import Link from "next/link";
-import { useTransition } from "react";
-import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useEffect, useState, useTransition } from "react";
 
 import { saveTemporaryFailedListAction } from "@/app/actions/lists";
 import { ListDetailsView } from "@/components/lists/list-details-view";
@@ -54,8 +54,23 @@ export function TemporaryFailedListDetails() {
     );
   }
 
-  const itemCountLabel = payload.itemCount === 1 ? t("common.item") : t("common.items");
-  const saveName = payload.title.trim() || `${payload.source.listName} ${t("lists.tempFailedDefaultSuffix")}`.trim() || t("lists.tempFailedFallbackTitle");
+  const currentPayload = payload;
+  const itemCountLabel =
+    currentPayload.itemCount === 1 ? t("common.item") : t("common.items");
+  const trimmedTitle = currentPayload.title.trim();
+  const trimmedSourceListName = currentPayload.source.listName.trim();
+  const derivedTitle = trimmedSourceListName
+    ? `${trimmedSourceListName} ${t("lists.tempFailedDefaultSuffix")}`.trim()
+    : "";
+  const saveName =
+    trimmedTitle || derivedTitle || t("lists.tempFailedFallbackTitle");
+  const translatedSaveError = saveErrorKey ? t(saveErrorKey) : null;
+  const resolvedSaveError =
+    translatedSaveError && translatedSaveError !== saveErrorKey
+      ? translatedSaveError
+      : saveErrorKey
+        ? t("auth.genericError")
+        : null;
 
   function handleSave() {
     if (isSaving) {
@@ -68,9 +83,9 @@ export function TemporaryFailedListDetails() {
       const actionPayload: TemporaryFailedListPayload = {
         kind: "failed-items",
         title: saveName,
-        items: payload.items,
-        itemCount: payload.itemCount,
-        source: payload.source,
+        items: currentPayload.items,
+        itemCount: currentPayload.itemCount,
+        source: currentPayload.source,
       };
 
       const result = await saveTemporaryFailedListAction(actionPayload);
@@ -94,16 +109,16 @@ export function TemporaryFailedListDetails() {
 
     saveTemporaryStudy({
       kind: "temp-failed",
-      title: payload.title,
-      items: payload.items.map((item) => ({
+      title: currentPayload.title,
+      items: currentPayload.items.map((item) => ({
         id: item.id,
         front: item.front,
         back: item.back,
         position: item.position,
       })),
       source: {
-        listId: payload.source.listId,
-        listName: payload.source.listName,
+        listId: currentPayload.source.listId,
+        listName: currentPayload.source.listName,
       },
     });
     router.push(`/study/setup?source=${encodeURIComponent(TEMP_FAILED_STUDY_QUERY_VALUE)}`);
@@ -112,20 +127,20 @@ export function TemporaryFailedListDetails() {
   return (
     <ListDetailsView
       eyebrow={t("lists.detailsEyebrow")}
-      title={payload.title}
+      title={currentPayload.title}
       description={
         <div className="space-y-1">
           <p>
-            {payload.itemCount} {itemCountLabel} {t("lists.readyForFutureStudy")}
+            {currentPayload.itemCount} {itemCountLabel} {t("lists.readyForFutureStudy")}
           </p>
           <p>
-            {t("lists.tempFailedSourceLabel")}: {payload.source.listName}
+            {t("lists.tempFailedSourceLabel")}: {currentPayload.source.listName}
           </p>
           <p>{t("lists.tempFailedDescription")}</p>
-          {saveErrorKey ? <p className="text-red-600">{t(saveErrorKey)}</p> : null}
+          {resolvedSaveError ? <p className="text-red-600">{resolvedSaveError}</p> : null}
         </div>
       }
-      items={payload.items}
+      items={currentPayload.items}
       headerMeta={
         <span className="inline-flex rounded-full border border-border bg-background/80 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
           {t("lists.tempFailedBadge")}
