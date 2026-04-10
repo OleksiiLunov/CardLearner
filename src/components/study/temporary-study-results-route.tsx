@@ -30,10 +30,12 @@ export function TemporaryStudyResultsRoute() {
     return <TemporaryStudyFallback backHref="/lists/temp/failed" />;
   }
 
+  const currentPayload = payload;
+
   return (
     <StudyResults
       listId={TEMP_FAILED_STUDY_SOURCE_ID}
-      listName={payload.title}
+      listName={currentPayload.title}
       resultsStorageKey={getTemporaryStudyResultsStorageKey()}
       studyAgainHref={`/study/setup?source=${encodeURIComponent(TEMP_FAILED_STUDY_QUERY_VALUE)}`}
       missingBackHref="/lists/temp/failed"

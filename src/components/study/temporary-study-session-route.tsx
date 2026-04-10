@@ -52,21 +52,23 @@ export function TemporaryStudySessionRoute() {
     return <TemporaryStudyFallback backHref="/lists/temp/failed" />;
   }
 
+  const currentPayload = payload;
+
   if ((initialSide !== "front" && initialSide !== "back") || (order !== "original" && order !== "random")) {
     return null;
   }
 
-  if (payload.items.length === 0) {
+  if (currentPayload.items.length === 0) {
     return null;
   }
 
   return (
     <StudySession
       listId={TEMP_FAILED_STUDY_SOURCE_ID}
-      listName={payload.title}
+      listName={currentPayload.title}
       initialSide={initialSide as StudyInitialSide}
       order={order as StudyOrder}
-      items={payload.items}
+      items={currentPayload.items}
       resultsStorageKey={getTemporaryStudyResultsStorageKey()}
       resultsHref={`/study/results?source=${encodeURIComponent(TEMP_FAILED_STUDY_QUERY_VALUE)}`}
     />

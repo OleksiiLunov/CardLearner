@@ -69,7 +69,7 @@ export function TemporaryFailedListDetails() {
     translatedSaveError && translatedSaveError !== saveErrorKey
       ? translatedSaveError
       : saveErrorKey
-        ? t("auth.genericError")
+        ? t("lists.tempFailedSaveError")
         : null;
 
   function handleSave() {

@@ -45,34 +45,34 @@ function getField(formData: FormData, key: string) {
   return String(formData.get(key) ?? "").trim();
 }
 
+function asRecord(value: unknown): Record<string, unknown> | null {
+  return typeof value === "object" && value !== null ? (value as Record<string, unknown>) : null;
+}
+
 function isTemporaryFailedListPayload(value: unknown): value is TemporaryFailedListPayload {
-  const source =
-    typeof value === "object" &&
-    value !== null &&
-    "source" in value &&
-    typeof value.source === "object" &&
-    value.source !== null
-      ? (value.source as Record<string, unknown>)
-      : null;
+  const payload = asRecord(value);
+
+  if (!payload) {
+    return false;
+  }
+
+  const source = asRecord(payload.source);
 
   return (
-    typeof value === "object" &&
-    value !== null &&
-    "kind" in value &&
-    value.kind === "failed-items" &&
-    "title" in value &&
-    typeof value.title === "string" &&
-    "items" in value &&
-    Array.isArray(value.items) &&
-    value.items.every(
-      (item) =>
-        typeof item === "object" &&
-        item !== null &&
-        typeof item.id === "string" &&
-        typeof item.front === "string" &&
-        typeof item.back === "string" &&
-        typeof item.position === "number",
-    ) &&
+    payload.kind === "failed-items" &&
+    typeof payload.title === "string" &&
+    Array.isArray(payload.items) &&
+    payload.items.every((item) => {
+      const listItem = asRecord(item);
+
+      return (
+        listItem !== null &&
+        typeof listItem.id === "string" &&
+        typeof listItem.front === "string" &&
+        typeof listItem.back === "string" &&
+        typeof listItem.position === "number"
+      );
+    }) &&
     source !== null &&
     typeof source.listId === "string" &&
     typeof source.listName === "string"

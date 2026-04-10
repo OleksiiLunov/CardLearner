@@ -30,11 +30,13 @@ export function TemporaryStudySetup() {
     return <TemporaryStudyFallback backHref="/lists/temp/failed" />;
   }
 
+  const currentPayload = payload;
+
   return (
     <StudySetupForm
-      hasItems={payload.items.length > 0}
-      itemCount={payload.items.length}
-      listName={payload.title}
+      hasItems={currentPayload.items.length > 0}
+      itemCount={currentPayload.items.length}
+      listName={currentPayload.title}
       hiddenFields={[{ name: "source", value: TEMP_FAILED_STUDY_QUERY_VALUE }]}
       backHref="/lists/temp/failed"
     />

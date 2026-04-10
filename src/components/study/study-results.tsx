@@ -75,28 +75,29 @@ export function StudyResults({
     );
   }
 
+  const currentResults = results;
   const fromSetup = searchParams.get("from");
 
   function handleOpenFailedItems() {
-    if (results.failedItems.length === 0) {
+    if (currentResults.failedItems.length === 0) {
       return;
     }
 
     const payload: TemporaryFailedListPayload = {
       kind: "failed-items",
       title: defaultFailedName,
-      items: results.failedItems.map((item) => ({
+      items: currentResults.failedItems.map((item) => ({
         id: item.id,
         front: item.front,
         back: item.back,
         position: item.position,
       })),
-      itemCount: results.failedItems.length,
+      itemCount: currentResults.failedItems.length,
       source: {
-        listId: results.listId,
-        listName: results.listName,
-        initialSide: results.initialSide,
-        order: results.order,
+        listId: currentResults.listId,
+        listName: currentResults.listName,
+        initialSide: currentResults.initialSide,
+        order: currentResults.order,
       },
     };
 
@@ -112,7 +113,7 @@ export function StudyResults({
             {t("results.eyebrow")}
           </p>
           <h1 className="text-3xl font-semibold tracking-tight text-balance text-foreground">
-            {results.listName}
+            {currentResults.listName}
           </h1>
           <p className="text-sm text-muted-foreground">
             {fromSetup ? t("results.completedDescription") : t("results.sessionSummary")}
@@ -122,25 +123,25 @@ export function StudyResults({
         <div className="grid grid-cols-3 gap-3">
           <div className="rounded-[1.5rem] bg-background/90 p-4 text-center shadow-sm">
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">{t("results.total")}</p>
-            <p className="mt-2 text-2xl font-semibold text-foreground">{results.totalItems}</p>
+            <p className="mt-2 text-2xl font-semibold text-foreground">{currentResults.totalItems}</p>
           </div>
           <div className="rounded-[1.5rem] bg-background/90 p-4 text-center shadow-sm">
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">{t("results.guessed")}</p>
-            <p className="mt-2 text-2xl font-semibold text-foreground">{results.guessedCount}</p>
+            <p className="mt-2 text-2xl font-semibold text-foreground">{currentResults.guessedCount}</p>
           </div>
           <button
             type="button"
             onClick={handleOpenFailedItems}
-            disabled={results.failedCount === 0}
-            aria-label={results.failedCount > 0 ? t("results.openFailedItems") : undefined}
+            disabled={currentResults.failedCount === 0}
+            aria-label={currentResults.failedCount > 0 ? t("results.openFailedItems") : undefined}
             className={`rounded-[1.5rem] border p-4 text-center shadow-sm transition-all duration-200 ${
-              results.failedCount > 0
+              currentResults.failedCount > 0
                 ? "cursor-pointer border-red-200 bg-red-50 hover:-translate-y-0.5 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-300/70 active:scale-[0.99]"
                 : "cursor-default border-red-100 bg-red-50/60 opacity-70"
             }`}
           >
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-red-600">{t("results.failed")}</p>
-            <p className="mt-2 text-2xl font-semibold text-red-700">{results.failedCount}</p>
+            <p className="mt-2 text-2xl font-semibold text-red-700">{currentResults.failedCount}</p>
           </button>
         </div>
 

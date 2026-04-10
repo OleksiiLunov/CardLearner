@@ -6,37 +6,39 @@ export const TEMP_FAILED_STUDY_QUERY_VALUE = "temp-failed";
 const TEMP_STUDY_STORAGE_KEY = "study:temp:failed";
 const TEMP_STUDY_RESULTS_STORAGE_KEY = `study-results:${TEMP_FAILED_STUDY_SOURCE_ID}`;
 
+function asRecord(value: unknown): Record<string, unknown> | null {
+  return typeof value === "object" && value !== null ? (value as Record<string, unknown>) : null;
+}
+
 function isStudyCard(value: unknown): value is StudyCard {
+  const card = asRecord(value);
+
+  if (!card) {
+    return false;
+  }
+
   return (
-    typeof value === "object" &&
-    value !== null &&
-    typeof value.id === "string" &&
-    typeof value.front === "string" &&
-    typeof value.back === "string" &&
-    typeof value.position === "number"
+    typeof card.id === "string" &&
+    typeof card.front === "string" &&
+    typeof card.back === "string" &&
+    typeof card.position === "number"
   );
 }
 
 function isTemporaryStudyPayload(value: unknown): value is TemporaryStudyPayload {
-  const source =
-    typeof value === "object" &&
-    value !== null &&
-    "source" in value &&
-    typeof value.source === "object" &&
-    value.source !== null
-      ? (value.source as Record<string, unknown>)
-      : null;
+  const payload = asRecord(value);
+
+  if (!payload) {
+    return false;
+  }
+
+  const source = asRecord(payload.source);
 
   return (
-    typeof value === "object" &&
-    value !== null &&
-    "kind" in value &&
-    value.kind === "temp-failed" &&
-    "title" in value &&
-    typeof value.title === "string" &&
-    "items" in value &&
-    Array.isArray(value.items) &&
-    value.items.every(isStudyCard) &&
+    payload.kind === "temp-failed" &&
+    typeof payload.title === "string" &&
+    Array.isArray(payload.items) &&
+    payload.items.every(isStudyCard) &&
     source !== null &&
     typeof source.listId === "string" &&
     typeof source.listName === "string"
