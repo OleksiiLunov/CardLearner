@@ -32,3 +32,65 @@ model ListItem {
   @@index([listId])
   @@unique([listId, position])
 }
+
+model Library {
+  id          String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  ownerId     String          @db.Uuid
+  title       String
+  description String?
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @default(now()) @updatedAt
+  folders     LibraryFolder[]
+  lists       LibraryList[]
+
+  @@index([ownerId])
+  @@index([title])
+}
+
+model LibraryFolder {
+  id             String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  libraryId      String           @db.Uuid
+  parentFolderId String?          @db.Uuid
+  ownerId        String           @db.Uuid
+  title          String
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @default(now()) @updatedAt
+  library        Library          @relation(fields: [libraryId], references: [id], onDelete: Cascade)
+  parentFolder   LibraryFolder?   @relation("LibraryFolderHierarchy", fields: [parentFolderId], references: [id], onDelete: Cascade)
+  childFolders   LibraryFolder[]  @relation("LibraryFolderHierarchy")
+  lists          LibraryList[]
+
+  @@index([libraryId, parentFolderId])
+  @@index([title])
+}
+
+model LibraryList {
+  id             String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  libraryId      String            @db.Uuid
+  parentFolderId String?           @db.Uuid
+  ownerId        String            @db.Uuid
+  title          String
+  description    String?
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @default(now()) @updatedAt
+  library        Library           @relation(fields: [libraryId], references: [id], onDelete: Cascade)
+  parentFolder   LibraryFolder?    @relation(fields: [parentFolderId], references: [id], onDelete: SetNull)
+  items          LibraryListItem[]
+
+  @@index([libraryId, parentFolderId])
+  @@index([title])
+}
+
+model LibraryListItem {
+  id            String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  libraryListId String       @db.Uuid
+  front         String
+  back          String
+  position      Int
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @default(now()) @updatedAt
+  libraryList   LibraryList  @relation(fields: [libraryListId], references: [id], onDelete: Cascade)
+
+  @@index([libraryListId, position])
+  @@unique([libraryListId, position])
+}
