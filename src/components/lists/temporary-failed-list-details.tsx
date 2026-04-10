@@ -7,6 +7,7 @@ import { useEffect, useState, useTransition } from "react";
 import { saveTemporaryFailedListAction } from "@/app/actions/lists";
 import { ListDetailsView } from "@/components/lists/list-details-view";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { clearTemporaryFailedList, readTemporaryFailedList } from "@/features/lists/temp-list-storage";
 import type { TemporaryFailedListPayload } from "@/features/lists/types";
 import { useTranslation } from "@/i18n/useTranslation";
@@ -23,6 +24,8 @@ export function TemporaryFailedListDetails() {
   const [payload, setPayload] = useState<TemporaryFailedListPayload | null>(null);
   const [loaded, setLoaded] = useState(false);
   const [saveErrorKey, setSaveErrorKey] = useState<string | null>(null);
+  const [title, setTitle] = useState("");
+  const [hasInitializedTitle, setHasInitializedTitle] = useState(false);
   const [isSaving, startSaving] = useTransition();
 
   useEffect(() => {
@@ -64,6 +67,8 @@ export function TemporaryFailedListDetails() {
     : "";
   const saveName =
     trimmedTitle || derivedTitle || t("lists.tempFailedFallbackTitle");
+  const trimmedInputTitle = title.trim();
+  const resolvedTitle = trimmedInputTitle || saveName;
   const translatedSaveError = saveErrorKey ? t(saveErrorKey) : null;
   const resolvedSaveError =
     translatedSaveError && translatedSaveError !== saveErrorKey
@@ -72,8 +77,17 @@ export function TemporaryFailedListDetails() {
         ? t("lists.tempFailedSaveError")
         : null;
 
+  useEffect(() => {
+    if (hasInitializedTitle) {
+      return;
+    }
+
+    setTitle(saveName);
+    setHasInitializedTitle(true);
+  }, [hasInitializedTitle, saveName]);
+
   function handleSave() {
-    if (isSaving) {
+    if (isSaving || trimmedInputTitle.length === 0) {
       return;
     }
 
@@ -82,7 +96,7 @@ export function TemporaryFailedListDetails() {
     startSaving(async () => {
       const actionPayload: TemporaryFailedListPayload = {
         kind: "failed-items",
-        title: saveName,
+        title: trimmedInputTitle || saveName,
         items: currentPayload.items,
         itemCount: currentPayload.itemCount,
         source: currentPayload.source,
@@ -127,9 +141,17 @@ export function TemporaryFailedListDetails() {
   return (
     <ListDetailsView
       eyebrow={t("lists.detailsEyebrow")}
-      title={currentPayload.title}
+      title={resolvedTitle}
       description={
-        <div className="space-y-1">
+        <div className="space-y-3">
+          <Input
+            value={title}
+            onChange={(event) => setTitle(event.target.value)}
+            onBlur={() => setTitle((currentTitle) => currentTitle.trim())}
+            placeholder={t("lists.tempFailedTitlePlaceholder")}
+            aria-label={t("lists.listName")}
+            disabled={isSaving}
+          />
           <p>
             {currentPayload.itemCount} {itemCountLabel} {t("lists.readyForFutureStudy")}
           </p>
@@ -148,7 +170,12 @@ export function TemporaryFailedListDetails() {
       }
       actions={
         <>
-          <Button type="button" className="w-full" onClick={handleSave} disabled={isSaving}>
+          <Button
+            type="button"
+            className="w-full"
+            onClick={handleSave}
+            disabled={isSaving || trimmedInputTitle.length === 0}
+          >
             {isSaving ? t("lists.tempFailedSavePending") : t("common.save")}
           </Button>
           <Button

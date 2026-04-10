@@ -117,6 +117,7 @@
     "tempFailedStudyAction": "Study",
     "tempFailedDefaultSuffix": "Failed",
     "tempFailedFallbackTitle": "Failed items",
+    "tempFailedTitlePlaceholder": "Enter list name",
     "tempFailedSavePending": "Saving list...",
     "tempFailedSaveError": "Unable to save this temporary list right now. Please try again."
   },

@@ -116,6 +116,7 @@
                   "tempFailedBadge":  "Тимчасовий",
                   "tempFailedDefaultSuffix":  "Помилки",
                   "tempFailedFallbackTitle":  "Помилкові елементи",
+                  "tempFailedTitlePlaceholder":  "Введіть назву списку",
                   "tempFailedSavePending":  "Збереження списку...",
                   "tempFailedSaveError":  "Зараз не вдалося зберегти цей тимчасовий список. Спробуйте ще раз.",
                   "tempFailedStudyAction":  "Навчатися"
