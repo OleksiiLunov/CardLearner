@@ -34,35 +34,11 @@ export function TemporaryFailedListDetails() {
     setLoaded(true);
   }, []);
 
-  if (!loaded) {
-    return (
-      <section className="rounded-[2rem] border border-border bg-card/80 p-6 text-center shadow-sm backdrop-blur">
-        <p className="text-sm text-muted-foreground">{t("common.loading")}</p>
-      </section>
-    );
-  }
-
-  if (!payload) {
-    return (
-      <section className="space-y-4 rounded-[2rem] border border-border bg-card/80 p-6 text-center shadow-sm backdrop-blur">
-        <h1 className="text-2xl font-semibold tracking-tight text-foreground">
-          {t("lists.tempFailedMissingTitle")}
-        </h1>
-        <p className="text-sm leading-6 text-muted-foreground">
-          {t("lists.tempFailedMissingDescription")}
-        </p>
-        <Button asChild className="w-full">
-          <Link href="/lists">{t("lists.tempFailedBackToLists")}</Link>
-        </Button>
-      </section>
-    );
-  }
-
   const currentPayload = payload;
   const itemCountLabel =
-    currentPayload.itemCount === 1 ? t("common.item") : t("common.items");
-  const trimmedTitle = currentPayload.title.trim();
-  const trimmedSourceListName = currentPayload.source.listName.trim();
+    currentPayload?.itemCount === 1 ? t("common.item") : t("common.items");
+  const trimmedTitle = currentPayload?.title.trim() ?? "";
+  const trimmedSourceListName = currentPayload?.source.listName.trim() ?? "";
   const derivedTitle = trimmedSourceListName
     ? `${trimmedSourceListName} ${t("lists.tempFailedDefaultSuffix")}`.trim()
     : "";
@@ -79,16 +55,16 @@ export function TemporaryFailedListDetails() {
         : null;
 
   useEffect(() => {
-    if (hasInitializedTitle) {
+    if (hasInitializedTitle || !loaded || !currentPayload) {
       return;
     }
 
     setTitle(saveName);
     setHasInitializedTitle(true);
-  }, [hasInitializedTitle, saveName]);
+  }, [currentPayload, hasInitializedTitle, loaded, saveName]);
 
   useEffect(() => {
-    if (!hasInitializedTitle) {
+    if (!loaded || !currentPayload || !hasInitializedTitle) {
       return;
     }
 
@@ -100,7 +76,33 @@ export function TemporaryFailedListDetails() {
 
     input.focus();
     input.select();
-  }, [hasInitializedTitle]);
+  }, [currentPayload, hasInitializedTitle, loaded]);
+
+  if (!loaded) {
+    return (
+      <section className="rounded-[2rem] border border-border bg-card/80 p-6 text-center shadow-sm backdrop-blur">
+        <p className="text-sm text-muted-foreground">{t("common.loading")}</p>
+      </section>
+    );
+  }
+
+  if (!currentPayload) {
+    return (
+      <section className="space-y-4 rounded-[2rem] border border-border bg-card/80 p-6 text-center shadow-sm backdrop-blur">
+        <h1 className="text-2xl font-semibold tracking-tight text-foreground">
+          {t("lists.tempFailedMissingTitle")}
+        </h1>
+        <p className="text-sm leading-6 text-muted-foreground">
+          {t("lists.tempFailedMissingDescription")}
+        </p>
+        <Button asChild className="w-full">
+          <Link href="/lists">{t("lists.tempFailedBackToLists")}</Link>
+        </Button>
+      </section>
+    );
+  }
+
+  const resolvedPayload = currentPayload;
 
   function handleSave() {
     if (isSaving || trimmedInputTitle.length === 0) {
@@ -113,9 +115,9 @@ export function TemporaryFailedListDetails() {
       const actionPayload: TemporaryFailedListPayload = {
         kind: "failed-items",
         title: trimmedInputTitle || saveName,
-        items: currentPayload.items,
-        itemCount: currentPayload.itemCount,
-        source: currentPayload.source,
+        items: resolvedPayload.items,
+        itemCount: resolvedPayload.itemCount,
+        source: resolvedPayload.source,
       };
 
       const result = await saveTemporaryFailedListAction(actionPayload);
@@ -139,16 +141,16 @@ export function TemporaryFailedListDetails() {
 
     saveTemporaryStudy({
       kind: "temp-failed",
-      title: currentPayload.title,
-      items: currentPayload.items.map((item) => ({
+      title: resolvedPayload.title,
+      items: resolvedPayload.items.map((item) => ({
         id: item.id,
         front: item.front,
         back: item.back,
         position: item.position,
       })),
       source: {
-        listId: currentPayload.source.listId,
-        listName: currentPayload.source.listName,
+        listId: resolvedPayload.source.listId,
+        listName: resolvedPayload.source.listName,
       },
     });
     router.push(`/study/setup?source=${encodeURIComponent(TEMP_FAILED_STUDY_QUERY_VALUE)}`);
@@ -170,16 +172,16 @@ export function TemporaryFailedListDetails() {
             disabled={isSaving}
           />
           <p>
-            {currentPayload.itemCount} {itemCountLabel} {t("lists.readyForFutureStudy")}
+            {resolvedPayload.itemCount} {itemCountLabel} {t("lists.readyForFutureStudy")}
           </p>
           <p>
-            {t("lists.tempFailedSourceLabel")}: {currentPayload.source.listName}
+            {t("lists.tempFailedSourceLabel")}: {resolvedPayload.source.listName}
           </p>
           <p>{t("lists.tempFailedDescription")}</p>
           {resolvedSaveError ? <p className="text-red-600">{resolvedSaveError}</p> : null}
         </div>
       }
-      items={currentPayload.items}
+      items={resolvedPayload.items}
       headerMeta={
         <span className="inline-flex rounded-full border border-border bg-background/80 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
           {t("lists.tempFailedBadge")}
