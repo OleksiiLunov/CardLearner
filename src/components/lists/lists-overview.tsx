@@ -43,12 +43,12 @@ export function ListsOverview({ deleted, lists, userEmail }: ListsOverviewProps)
               {t("lists.databaseScopeDescription")}
             </p>
           </div>
-          <div className="grid gap-2 sm:w-auto sm:grid-cols-2">
-            <Button asChild size="sm" variant="secondary" className="w-full sm:w-auto">
-              <Link href="/libraries">{t("navigation.libraries")}</Link>
-            </Button>
-            <Button asChild size="sm" className="w-full sm:w-auto">
+          <div className="flex w-full flex-col gap-2 sm:w-auto sm:min-w-44">
+            <Button asChild size="sm" className="w-full">
               <Link href="/lists/new">{t("lists.createList")}</Link>
+            </Button>
+            <Button asChild size="sm" variant="secondary" className="w-full">
+              <Link href="/libraries">{t("navigation.libraries")}</Link>
             </Button>
           </div>
         </div>
