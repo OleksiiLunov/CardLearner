@@ -1,49 +1,55 @@
 import "server-only";
 
-import type { Prisma } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 
 import { prisma } from "@/lib/prisma";
 
-const libraryBrowseSelect = {
-  id: true,
-  ownerId: true,
-  title: true,
-  description: true,
-  createdAt: true,
-  updatedAt: true,
-} satisfies Prisma.LibrarySelect;
+const libraryBrowseArgs = Prisma.validator<Prisma.LibraryDefaultArgs>()({
+  select: {
+    id: true,
+    ownerId: true,
+    title: true,
+    description: true,
+    createdAt: true,
+    updatedAt: true,
+  },
+});
 
-const libraryFolderSummarySelect = {
-  id: true,
-  libraryId: true,
-  parentFolderId: true,
-  ownerId: true,
-  title: true,
-  createdAt: true,
-  updatedAt: true,
-} satisfies Prisma.LibraryFolderSelect;
+const libraryFolderSummaryArgs = Prisma.validator<Prisma.LibraryFolderDefaultArgs>()({
+  select: {
+    id: true,
+    libraryId: true,
+    parentFolderId: true,
+    ownerId: true,
+    title: true,
+    createdAt: true,
+    updatedAt: true,
+  },
+});
 
-const libraryListSummarySelect = {
-  id: true,
-  libraryId: true,
-  parentFolderId: true,
-  ownerId: true,
-  title: true,
-  description: true,
-  createdAt: true,
-  updatedAt: true,
-} satisfies Prisma.LibraryListSelect;
+const libraryListSummaryArgs = Prisma.validator<Prisma.LibraryListDefaultArgs>()({
+  select: {
+    id: true,
+    libraryId: true,
+    parentFolderId: true,
+    ownerId: true,
+    title: true,
+    description: true,
+    createdAt: true,
+    updatedAt: true,
+  },
+});
 
 export type LibraryBrowseItem = Prisma.LibraryGetPayload<{
-  select: typeof libraryBrowseSelect;
+  select: typeof libraryBrowseArgs.select;
 }>;
 
 export type LibraryFolderSummary = Prisma.LibraryFolderGetPayload<{
-  select: typeof libraryFolderSummarySelect;
+  select: typeof libraryFolderSummaryArgs.select;
 }>;
 
 export type LibraryListSummary = Prisma.LibraryListGetPayload<{
-  select: typeof libraryListSummarySelect;
+  select: typeof libraryListSummaryArgs.select;
 }>;
 
 export type LibraryRootContents = {
@@ -59,7 +65,7 @@ export type LibraryFolderContents = {
 
 export async function getLibrariesForBrowsing(): Promise<LibraryBrowseItem[]> {
   return prisma.library.findMany({
-    select: libraryBrowseSelect,
+    ...libraryBrowseArgs,
     orderBy: {
       updatedAt: "desc",
     },
@@ -69,7 +75,7 @@ export async function getLibrariesForBrowsing(): Promise<LibraryBrowseItem[]> {
 export async function getLibrariesForOwner(ownerId: string): Promise<LibraryBrowseItem[]> {
   return prisma.library.findMany({
     where: { ownerId },
-    select: libraryBrowseSelect,
+    ...libraryBrowseArgs,
     orderBy: {
       updatedAt: "desc",
     },
@@ -79,7 +85,7 @@ export async function getLibrariesForOwner(ownerId: string): Promise<LibraryBrow
 export async function getLibraryById(libraryId: string): Promise<LibraryBrowseItem | null> {
   return prisma.library.findUnique({
     where: { id: libraryId },
-    select: libraryBrowseSelect,
+    ...libraryBrowseArgs,
   });
 }
 
@@ -90,7 +96,7 @@ export async function getLibraryRootContents(libraryId: string): Promise<Library
         libraryId,
         parentFolderId: null,
       },
-      select: libraryFolderSummarySelect,
+      ...libraryFolderSummaryArgs,
       orderBy: {
         title: "asc",
       },
@@ -100,7 +106,7 @@ export async function getLibraryRootContents(libraryId: string): Promise<Library
         libraryId,
         parentFolderId: null,
       },
-      select: libraryListSummarySelect,
+      ...libraryListSummaryArgs,
       orderBy: {
         title: "asc",
       },
@@ -119,7 +125,7 @@ export async function getLibraryFolderContents(
       id: folderId,
       libraryId,
     },
-    select: libraryFolderSummarySelect,
+    ...libraryFolderSummaryArgs,
   });
 
   if (!folder) {
@@ -133,7 +139,7 @@ export async function getLibraryFolderContents(
         libraryId,
         parentFolderId: currentFolder.id,
       },
-      select: libraryFolderSummarySelect,
+      ...libraryFolderSummaryArgs,
       orderBy: {
         title: "asc",
       },
@@ -143,7 +149,7 @@ export async function getLibraryFolderContents(
         libraryId,
         parentFolderId: currentFolder.id,
       },
-      select: libraryListSummarySelect,
+      ...libraryListSummaryArgs,
       orderBy: {
         title: "asc",
       },
