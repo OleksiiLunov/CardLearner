@@ -21,7 +21,7 @@ import {
 export function TemporaryFailedListDetails() {
   const { t } = useTranslation();
   const router = useRouter();
-  const titleInputRef = useRef<HTMLInputElement | null>(null);
+  const studyButtonRef = useRef<HTMLButtonElement | null>(null);
   const [payload, setPayload] = useState<TemporaryFailedListPayload | null>(null);
   const [loaded, setLoaded] = useState(false);
   const [saveErrorKey, setSaveErrorKey] = useState<string | null>(null);
@@ -68,14 +68,13 @@ export function TemporaryFailedListDetails() {
       return;
     }
 
-    const input = titleInputRef.current;
+    const studyButton = studyButtonRef.current;
 
-    if (!input) {
+    if (!studyButton) {
       return;
     }
 
-    input.focus();
-    input.select();
+    studyButton.focus();
   }, [currentPayload, hasInitializedTitle, loaded]);
 
   if (!loaded) {
@@ -163,7 +162,6 @@ export function TemporaryFailedListDetails() {
       description={
         <div className="space-y-3">
           <Input
-            ref={titleInputRef}
             value={title}
             onChange={(event) => setTitle(event.target.value)}
             onBlur={() => setTitle((currentTitle) => currentTitle.trim())}
@@ -198,6 +196,7 @@ export function TemporaryFailedListDetails() {
             {isSaving ? t("lists.tempFailedSavePending") : t("common.save")}
           </Button>
           <Button
+            ref={studyButtonRef}
             type="button"
             variant="secondary"
             className="w-full"
