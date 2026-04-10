@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 
 import { saveTemporaryFailedListAction } from "@/app/actions/lists";
 import { ListDetailsView } from "@/components/lists/list-details-view";
@@ -21,6 +21,7 @@ import {
 export function TemporaryFailedListDetails() {
   const { t } = useTranslation();
   const router = useRouter();
+  const titleInputRef = useRef<HTMLInputElement | null>(null);
   const [payload, setPayload] = useState<TemporaryFailedListPayload | null>(null);
   const [loaded, setLoaded] = useState(false);
   const [saveErrorKey, setSaveErrorKey] = useState<string | null>(null);
@@ -86,6 +87,21 @@ export function TemporaryFailedListDetails() {
     setHasInitializedTitle(true);
   }, [hasInitializedTitle, saveName]);
 
+  useEffect(() => {
+    if (!hasInitializedTitle) {
+      return;
+    }
+
+    const input = titleInputRef.current;
+
+    if (!input) {
+      return;
+    }
+
+    input.focus();
+    input.select();
+  }, [hasInitializedTitle]);
+
   function handleSave() {
     if (isSaving || trimmedInputTitle.length === 0) {
       return;
@@ -145,6 +161,7 @@ export function TemporaryFailedListDetails() {
       description={
         <div className="space-y-3">
           <Input
+            ref={titleInputRef}
             value={title}
             onChange={(event) => setTitle(event.target.value)}
             onBlur={() => setTitle((currentTitle) => currentTitle.trim())}
