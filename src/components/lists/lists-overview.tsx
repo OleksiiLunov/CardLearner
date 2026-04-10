@@ -35,15 +35,15 @@ export function ListsOverview({ deleted, lists, userEmail }: ListsOverviewProps)
       ) : null}
 
       <div className="rounded-[2rem] border border-border bg-card/80 p-5 shadow-sm backdrop-blur">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="space-y-1.5">
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div className="min-w-0 flex-1 space-y-1.5">
             <p className="text-sm font-semibold text-foreground">{t("lists.collections")}</p>
             <p className="max-w-sm text-sm leading-6 text-muted-foreground">
               {t("common.signedInAs")} {userEmail ?? t("common.unknownUser")}.{" "}
               {t("lists.databaseScopeDescription")}
             </p>
           </div>
-          <div className="flex w-full flex-col gap-2 sm:w-auto sm:min-w-44">
+          <div className="flex w-full flex-col gap-2 md:w-full md:max-w-44 md:flex-none">
             <Button asChild size="sm" className="w-full">
               <Link href="/lists/new">{t("lists.createList")}</Link>
             </Button>
