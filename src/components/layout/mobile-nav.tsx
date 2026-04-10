@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BookOpen, LibraryBig, SquarePen } from "lucide-react";
+import { BookOpen, FolderOpen, LibraryBig, SquarePen } from "lucide-react";
 
 import { useTranslation } from "@/i18n/useTranslation";
 import { cn } from "@/lib/utils";
@@ -21,6 +21,12 @@ const navItems = [
     match: (pathname: string) => pathname.startsWith("/study"),
   },
   {
+    href: "/libraries",
+    label: "Libraries",
+    icon: FolderOpen,
+    match: (pathname: string) => pathname.startsWith("/libraries"),
+  },
+  {
     href: "/lists/new",
     label: "Create",
     icon: SquarePen,
@@ -34,7 +40,7 @@ export function MobileNav() {
 
   return (
     <nav className="fixed inset-x-0 bottom-4 z-30 mx-auto w-[calc(100%-2rem)] max-w-md rounded-[2rem] border border-white/70 bg-card/95 p-2 shadow-lg backdrop-blur">
-      <ul className="grid grid-cols-3 gap-2">
+      <ul className="grid grid-cols-4 gap-2">
         {navItems.map((item) => {
           const Icon = item.icon;
           const isActive = item.match(pathname);
@@ -54,7 +60,9 @@ export function MobileNav() {
                     ? t("navigation.lists")
                     : item.href === "/study/setup"
                       ? t("navigation.study")
-                      : t("navigation.create")}
+                      : item.href === "/libraries"
+                        ? t("navigation.libraries")
+                        : t("navigation.create")}
                 </span>
               </Link>
             </li>

@@ -43,9 +43,14 @@ export function ListsOverview({ deleted, lists, userEmail }: ListsOverviewProps)
               {t("lists.databaseScopeDescription")}
             </p>
           </div>
-          <Button asChild size="sm" className="w-full sm:w-auto">
-            <Link href="/lists/new">{t("lists.createList")}</Link>
-          </Button>
+          <div className="grid gap-2 sm:w-auto sm:grid-cols-2">
+            <Button asChild size="sm" variant="secondary" className="w-full sm:w-auto">
+              <Link href="/libraries">{t("navigation.libraries")}</Link>
+            </Button>
+            <Button asChild size="sm" className="w-full sm:w-auto">
+              <Link href="/lists/new">{t("lists.createList")}</Link>
+            </Button>
+          </div>
         </div>
       </div>
 

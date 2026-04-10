@@ -24,10 +24,24 @@
   "navigation": {
     "home": "Home",
     "lists": "Lists",
+    "libraries": "Libraries",
     "profile": "Profile",
     "study": "Study",
     "language": "Language",
     "create": "Create"
+  },
+  "libraries": {
+    "eyebrow": "Libraries",
+    "title": "Browse public libraries.",
+    "description": "Explore shared libraries from across the app or narrow the list to your own.",
+    "all": "All libraries",
+    "mine": "My libraries",
+    "updatedLabel": "Updated",
+    "viewDetails": "Open library",
+    "emptyAllTitle": "No libraries yet",
+    "emptyAllDescription": "Public libraries will appear here once they are available.",
+    "emptyMineTitle": "You have no libraries yet",
+    "emptyMineDescription": "Your public libraries will appear here after they are created."
   },
   "auth": {
     "signIn": "Sign in",
