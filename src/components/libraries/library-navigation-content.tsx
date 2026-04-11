@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { BookText, Folder } from "lucide-react";
 
 import type { LibraryFolderSummary, LibraryListSummary } from "@/lib/data/libraries";
 
@@ -27,6 +28,21 @@ type LibraryNavigationContentProps = {
   };
 };
 
+type LibraryContentItem =
+  | {
+      type: "folder";
+      id: string;
+      href: string;
+      title: string;
+    }
+  | {
+      type: "list";
+      description: string | null;
+      href: string;
+      id: string;
+      title: string;
+    };
+
 export function LibraryNavigationContent({
   breadcrumbs,
   emptyDescription,
@@ -39,7 +55,22 @@ export function LibraryNavigationContent({
   topContent,
   t,
 }: LibraryNavigationContentProps) {
-  const hasContents = folders.length > 0 || lists.length > 0;
+  const contentItems: LibraryContentItem[] = [
+    ...folders.map((folder): LibraryContentItem => ({
+      type: "folder",
+      id: folder.id,
+      href: `/libraries/${folder.libraryId}/folders/${folder.id}`,
+      title: folder.title,
+    })),
+    ...lists.map((list): LibraryContentItem => ({
+      type: "list",
+      id: list.id,
+      href: `/libraries/${list.libraryId}/lists/${list.id}`,
+      title: list.title,
+      description: list.description,
+    })),
+  ];
+  const hasContents = contentItems.length > 0;
 
   return (
     <div className="space-y-7">
@@ -93,67 +124,52 @@ export function LibraryNavigationContent({
           </div>
         </section>
       ) : (
-        <div className="grid gap-6 xl:grid-cols-2">
-          <section className="rounded-[2rem] border border-border bg-card/80 p-5 shadow-sm backdrop-blur">
-            <div className="space-y-4">
-              <h2 className="text-lg font-semibold tracking-tight text-foreground">
-                {t.foldersHeading}
-              </h2>
-              {folders.length === 0 ? (
-                <p className="text-sm leading-6 text-muted-foreground">{t.emptyFolders}</p>
-              ) : (
-                <div className="grid gap-3">
-                  {folders.map((folder) => (
-                    <Link
-                      key={folder.id}
-                      href={`/libraries/${folder.libraryId}/folders/${folder.id}`}
-                      className="group rounded-[1.5rem] border border-border bg-background/70 p-4 transition-all duration-200 hover:-translate-y-0.5 hover:bg-secondary/30 hover:shadow-sm active:scale-[0.99]"
-                    >
-                      <div className="flex items-center justify-between gap-4">
-                        <h3 className="text-base font-semibold tracking-tight text-foreground">
-                          {folder.title}
-                        </h3>
-                        <span className="text-sm text-muted-foreground">{t.openFolder}</span>
-                      </div>
-                    </Link>
-                  ))}
+        <section className="rounded-[2rem] border border-border bg-card/80 p-5 shadow-sm backdrop-blur">
+          <div className="grid gap-3">
+            {contentItems.map((item) => (
+              <Link
+                key={`${item.type}-${item.id}`}
+                href={item.href}
+                className={
+                  item.type === "folder"
+                    ? "group rounded-[1.5rem] border border-border bg-background/80 p-4 transition-all duration-200 hover:-translate-y-0.5 hover:bg-secondary/30 hover:shadow-sm active:scale-[0.99]"
+                    : "group rounded-[1.5rem] border border-border/70 bg-background/55 p-4 transition-all duration-200 hover:-translate-y-0.5 hover:bg-secondary/20 hover:shadow-sm active:scale-[0.99]"
+                }
+              >
+                <div className="flex items-start justify-between gap-4">
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      {item.type === "folder" ? (
+                        <>
+                          <Folder className="h-4 w-4 text-foreground" aria-hidden="true" />
+                          <span className="rounded-full bg-secondary px-2.5 py-1 text-xs font-semibold text-foreground">
+                            {t.foldersHeading}
+                          </span>
+                        </>
+                      ) : (
+                        <>
+                          <BookText className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
+                          <span className="rounded-full border border-border bg-background px-2.5 py-1 text-xs font-semibold text-muted-foreground">
+                            {t.listsHeading}
+                          </span>
+                        </>
+                      )}
+                    </div>
+                    <h3 className="text-base font-semibold tracking-tight text-foreground">
+                      {item.title}
+                    </h3>
+                    {item.type === "list" && item.description ? (
+                      <p className="text-sm leading-6 text-muted-foreground">{item.description}</p>
+                    ) : null}
+                  </div>
+                  <span className="text-sm text-muted-foreground">
+                    {item.type === "folder" ? t.openFolder : t.listsHeading}
+                  </span>
                 </div>
-              )}
-            </div>
-          </section>
-
-          <section className="rounded-[2rem] border border-border bg-card/80 p-5 shadow-sm backdrop-blur">
-            <div className="space-y-4">
-              <h2 className="text-lg font-semibold tracking-tight text-foreground">
-                {t.listsHeading}
-              </h2>
-              {lists.length === 0 ? (
-                <p className="text-sm leading-6 text-muted-foreground">{t.emptyLists}</p>
-              ) : (
-                <div className="grid gap-3">
-                  {lists.map((list) => (
-                    <Link
-                      key={list.id}
-                      href={`/libraries/${list.libraryId}/lists/${list.id}`}
-                      className="rounded-[1.5rem] border border-border bg-background/70 p-4 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-secondary/30 hover:shadow-md active:scale-[0.99]"
-                    >
-                      <div className="space-y-2">
-                        <h3 className="text-base font-semibold tracking-tight text-foreground">
-                          {list.title}
-                        </h3>
-                        {list.description ? (
-                          <p className="text-sm leading-6 text-muted-foreground">
-                            {list.description}
-                          </p>
-                        ) : null}
-                      </div>
-                    </Link>
-                  ))}
-                </div>
-              )}
-            </div>
-          </section>
-        </div>
+              </Link>
+            ))}
+          </div>
+        </section>
       )}
     </div>
   );
