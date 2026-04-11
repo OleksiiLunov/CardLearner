@@ -13,6 +13,7 @@ import {
   getLibraryById,
   getLibraryFolderById,
   getLibraryListById,
+  updateLibraryFolder,
   updateLibraryListWithItems,
   updateLibrary,
 } from "@/lib/data/libraries";
@@ -285,6 +286,46 @@ export async function createNestedLibraryFolderAction(
   revalidatePath(`/libraries/${currentLibrary.id}`);
   revalidatePath(`/libraries/${currentLibrary.id}/folders/${currentParentFolder.id}`);
   redirect(`/libraries/${currentLibrary.id}/folders/${currentParentFolder.id}`);
+}
+
+export async function updateLibraryFolderAction(
+  libraryId: string,
+  folderId: string,
+  _previousState: LibraryFolderFormState,
+  formData: FormData,
+): Promise<LibraryFolderFormState> {
+  const user = await requireAuthenticatedUser();
+  const [library, folder] = await Promise.all([
+    getLibraryById(libraryId),
+    getLibraryFolderById(libraryId, folderId),
+  ]);
+
+  if (!library || library.ownerId !== user.id || !folder) {
+    notFound();
+  }
+
+  const currentLibrary = library;
+  const currentFolder = folder;
+  const input = validateLibraryFolderInput(formData);
+
+  if (input.fieldErrorKeys) {
+    return buildFolderErrorState(input);
+  }
+
+  try {
+    await updateLibraryFolder({
+      libraryId: currentLibrary.id,
+      folderId: currentFolder.id,
+      title: input.title,
+    });
+  } catch {
+    return buildFolderErrorState(input, undefined, "libraries.updateFolderError");
+  }
+
+  revalidatePath("/libraries");
+  revalidatePath(`/libraries/${currentLibrary.id}`);
+  revalidatePath(`/libraries/${currentLibrary.id}/folders/${currentFolder.id}`);
+  redirect(`/libraries/${currentLibrary.id}/folders/${currentFolder.id}`);
 }
 
 function validateLibraryListInput(formData: FormData): {

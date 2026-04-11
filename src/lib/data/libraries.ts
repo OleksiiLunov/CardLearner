@@ -119,6 +119,12 @@ type CreateNestedLibraryFolderInput = {
   title: string;
 };
 
+type UpdateLibraryFolderInput = {
+  libraryId: string;
+  folderId: string;
+  title: string;
+};
+
 type CreateRootLibraryListInput = {
   libraryId: string;
   ownerId: string;
@@ -242,6 +248,26 @@ export async function createNestedLibraryFolder(
       libraryId: input.libraryId,
       parentFolderId: input.parentFolderId,
       ownerId: input.ownerId,
+      title: input.title,
+    },
+    ...libraryFolderSummaryArgs,
+  });
+}
+
+export async function updateLibraryFolder(
+  input: UpdateLibraryFolderInput,
+): Promise<LibraryFolderSummary | null> {
+  const existingFolder = await getLibraryFolderById(input.libraryId, input.folderId);
+
+  if (!existingFolder) {
+    return null;
+  }
+
+  return prisma.libraryFolder.update({
+    where: {
+      id: existingFolder.id,
+    },
+    data: {
       title: input.title,
     },
     ...libraryFolderSummaryArgs,

@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import {
   createNestedLibraryFolderAction,
   createNestedLibraryListAction,
+  updateLibraryFolderAction,
 } from "@/app/actions/libraries";
 import { CreateNestedFolderDialogAction } from "@/components/libraries/create-nested-folder-dialog-action";
 import { LibraryNavigationContent } from "@/components/libraries/library-navigation-content";
@@ -72,6 +73,14 @@ export default async function LibraryFolderDetailsPage({
               currentLibrary.id,
               currentFolderContents.folder.id,
             )}
+            editAction={updateLibraryFolderAction.bind(
+              null,
+              currentLibrary.id,
+              currentFolderContents.folder.id,
+            )}
+            initialEditValues={{
+              title: currentFolderContents.folder.title,
+            }}
             createListAction={createNestedLibraryListAction.bind(
               null,
               currentLibrary.id,
