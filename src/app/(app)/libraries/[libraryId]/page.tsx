@@ -4,9 +4,8 @@ import {
   createRootLibraryFolderAction,
   createRootLibraryListAction,
 } from "@/app/actions/libraries";
-import { CreateRootFolderForm } from "@/components/libraries/create-root-folder-form";
-import { CreateRootListForm } from "@/components/libraries/create-root-list-form";
 import { LibraryNavigationContent } from "@/components/libraries/library-navigation-content";
+import { LibraryOwnerActions } from "@/components/libraries/library-owner-actions";
 import { getServerLocale } from "@/i18n/get-server-locale";
 import { getLibraryById, getLibraryRootContents } from "@/lib/data/libraries";
 import { translations } from "@/locales";
@@ -51,10 +50,10 @@ export default async function LibraryDetailsPage({ params }: LibraryDetailsPageP
       sectionTitle={currentLibrary.title}
       topContent={
         isOwner ? (
-          <div className="grid gap-4 xl:grid-cols-2">
-            <CreateRootFolderForm action={createRootLibraryFolderAction.bind(null, currentLibrary.id)} />
-            <CreateRootListForm action={createRootLibraryListAction.bind(null, currentLibrary.id)} />
-          </div>
+          <LibraryOwnerActions
+            createFolderAction={createRootLibraryFolderAction.bind(null, currentLibrary.id)}
+            createListAction={createRootLibraryListAction.bind(null, currentLibrary.id)}
+          />
         ) : null
       }
       t={{
