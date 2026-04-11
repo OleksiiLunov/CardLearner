@@ -3,7 +3,13 @@
 import { revalidatePath } from "next/cache";
 import { notFound, redirect } from "next/navigation";
 
-import { createLibrary, createRootLibraryFolder, getLibraryById } from "@/lib/data/libraries";
+import {
+  createLibrary,
+  createRootLibraryFolder,
+  createRootLibraryList,
+  getLibraryById,
+} from "@/lib/data/libraries";
+import { parseListItemsFromMultilineInput } from "@/lib/lists/parse-list-items";
 import { getCurrentUser } from "@/lib/supabase/session";
 
 export type LibraryFormState = {
@@ -33,6 +39,25 @@ export type LibraryFolderFormState = {
   values?: {
     title: string;
   };
+};
+
+export type LibraryListFormState = {
+  formError?: string;
+  formErrorKey?: string;
+  fieldErrors?: {
+    title?: string;
+    content?: string;
+  };
+  fieldErrorKeys?: {
+    title?: string;
+    content?: string;
+  };
+  values?: {
+    title: string;
+    description: string;
+    content: string;
+  };
+  ignoredLineCount?: number;
 };
 
 function getField(formData: FormData, key: string): string {
@@ -173,6 +198,94 @@ export async function createRootLibraryFolderAction(
     });
   } catch {
     return buildFolderErrorState(input, undefined, "libraries.createFolderError");
+  }
+
+  revalidatePath("/libraries");
+  revalidatePath(`/libraries/${currentLibrary.id}`);
+  redirect(`/libraries/${currentLibrary.id}`);
+}
+
+function validateLibraryListInput(formData: FormData): {
+  title: string;
+  description: string | null;
+  rawDescription: string;
+  content: string;
+  ignoredLineCount: number;
+  items: ReturnType<typeof parseListItemsFromMultilineInput>["items"];
+  fieldErrorKeys?: LibraryListFormState["fieldErrorKeys"];
+} {
+  const title = getField(formData, "title");
+  const rawDescription = getField(formData, "description");
+  const content = String(formData.get("content") ?? "");
+  const parsed = parseListItemsFromMultilineInput(content);
+  const fieldErrorKeys: NonNullable<LibraryListFormState["fieldErrorKeys"]> = {};
+
+  if (!title) {
+    fieldErrorKeys.title = "libraries.listTitleRequired";
+  }
+
+  if (parsed.items.length === 0) {
+    fieldErrorKeys.content = "libraries.listContentRequired";
+  }
+
+  return {
+    title,
+    description: rawDescription ? rawDescription : null,
+    rawDescription,
+    content,
+    ignoredLineCount: parsed.ignoredLineCount,
+    items: parsed.items,
+    fieldErrorKeys: Object.keys(fieldErrorKeys).length > 0 ? fieldErrorKeys : undefined,
+  };
+}
+
+function buildListErrorState(
+  input: ReturnType<typeof validateLibraryListInput>,
+  formError?: string,
+  formErrorKey?: string,
+): LibraryListFormState {
+  return {
+    formError,
+    formErrorKey,
+    fieldErrorKeys: input.fieldErrorKeys,
+    ignoredLineCount: input.ignoredLineCount,
+    values: {
+      title: input.title,
+      description: input.rawDescription,
+      content: input.content,
+    },
+  };
+}
+
+export async function createRootLibraryListAction(
+  libraryId: string,
+  _previousState: LibraryListFormState,
+  formData: FormData,
+): Promise<LibraryListFormState> {
+  const user = await requireAuthenticatedUser();
+  const library = await getLibraryById(libraryId);
+
+  if (!library || library.ownerId !== user.id) {
+    notFound();
+  }
+
+  const currentLibrary = library;
+  const input = validateLibraryListInput(formData);
+
+  if (input.fieldErrorKeys) {
+    return buildListErrorState(input);
+  }
+
+  try {
+    await createRootLibraryList({
+      libraryId: currentLibrary.id,
+      ownerId: user.id,
+      title: input.title,
+      description: input.description,
+      items: input.items,
+    });
+  } catch {
+    return buildListErrorState(input, undefined, "libraries.createListError");
   }
 
   revalidatePath("/libraries");

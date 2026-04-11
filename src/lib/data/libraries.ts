@@ -3,6 +3,7 @@ import "server-only";
 import { Prisma } from "@prisma/client";
 
 import { prisma } from "@/lib/prisma";
+import type { ParsedListItemInput } from "@/lib/lists/parse-list-items";
 
 const libraryBrowseArgs = Prisma.validator<Prisma.LibraryDefaultArgs>()({
   select: {
@@ -77,6 +78,14 @@ type CreateRootLibraryFolderInput = {
   title: string;
 };
 
+type CreateRootLibraryListInput = {
+  libraryId: string;
+  ownerId: string;
+  title: string;
+  description: string | null;
+  items: ParsedListItemInput[];
+};
+
 export async function getLibrariesForBrowsing(): Promise<LibraryBrowseItem[]> {
   return prisma.library.findMany({
     ...libraryBrowseArgs,
@@ -125,6 +134,28 @@ export async function createRootLibraryFolder(
       title: input.title,
     },
     ...libraryFolderSummaryArgs,
+  });
+}
+
+export async function createRootLibraryList(
+  input: CreateRootLibraryListInput,
+): Promise<LibraryListSummary> {
+  return prisma.libraryList.create({
+    data: {
+      libraryId: input.libraryId,
+      parentFolderId: null,
+      ownerId: input.ownerId,
+      title: input.title,
+      description: input.description,
+      items: {
+        create: input.items.map((item, index) => ({
+          front: item.front,
+          back: item.back,
+          position: item.position ?? index,
+        })),
+      },
+    },
+    ...libraryListSummaryArgs,
   });
 }
 
