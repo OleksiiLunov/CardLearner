@@ -1,9 +1,20 @@
 "use client";
 
+import type { ReactNode } from "react";
 import { useRouter } from "next/navigation";
 
 import type { LibraryListFormState } from "@/app/actions/libraries";
+import { EditLibraryListForm } from "@/components/libraries/edit-library-list-form";
 import { ListDetailsView } from "@/components/lists/list-details-view";
+import {
+  AlertDialog,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "@/i18n/useTranslation";
 import {
@@ -14,10 +25,55 @@ import {
   TEMP_LIBRARY_STUDY_SOURCE_ID,
 } from "@/lib/study/temp-study-storage";
 
+type OwnerActionDialogProps = {
+  children: ReactNode;
+  description: string;
+  title: string;
+  triggerLabel: string;
+};
+
+function OwnerActionDialog({
+  children,
+  description,
+  title,
+  triggerLabel,
+}: OwnerActionDialogProps) {
+  const { t } = useTranslation();
+
+  return (
+    <AlertDialog>
+      <AlertDialogTrigger asChild>
+        <Button type="button" variant="secondary" className="w-full">
+          {triggerLabel}
+        </Button>
+      </AlertDialogTrigger>
+      <AlertDialogContent className="max-h-[calc(100vh-1.5rem)] max-w-3xl overflow-y-auto border-0 bg-transparent p-0 shadow-none">
+        <AlertDialogHeader className="sr-only">
+          <AlertDialogTitle>{title}</AlertDialogTitle>
+          <AlertDialogDescription>{description}</AlertDialogDescription>
+        </AlertDialogHeader>
+        <div className="space-y-3">
+          <div className="flex justify-end px-1">
+            <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
+          </div>
+          {children}
+        </div>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
+}
+
 type LibraryListDetailsProps = {
   backHref: string;
+  canEdit: boolean;
   downloadAction: () => Promise<void>;
+  editAction?: (state: LibraryListFormState, formData: FormData) => Promise<LibraryListFormState>;
   libraryTitle: string;
+  initialEditValues?: {
+    title: string;
+    description: string;
+    content: string;
+  };
   list: {
     id: string;
     title: string;
@@ -33,7 +89,10 @@ type LibraryListDetailsProps = {
 
 export function LibraryListDetails({
   backHref,
+  canEdit,
   downloadAction,
+  editAction,
+  initialEditValues,
   libraryTitle,
   list,
 }: LibraryListDetailsProps) {
@@ -81,6 +140,15 @@ export function LibraryListDetails({
       items={list.items}
       actions={
         <>
+          {canEdit && editAction && initialEditValues ? (
+            <OwnerActionDialog
+              description={t("libraries.editListDescription")}
+              title={t("libraries.editList")}
+              triggerLabel={t("common.edit")}
+            >
+              <EditLibraryListForm action={editAction} initialValues={initialEditValues} />
+            </OwnerActionDialog>
+          ) : null}
           <form action={downloadAction} className="w-full">
             <Button type="submit" className="w-full">
               {t("libraries.downloadList")}

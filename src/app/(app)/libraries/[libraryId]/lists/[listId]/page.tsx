@@ -1,7 +1,10 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { downloadLibraryListAction } from "@/app/actions/libraries";
+import {
+  downloadLibraryListAction,
+  updateLibraryListAction,
+} from "@/app/actions/libraries";
 import { LibraryListDetails } from "@/components/libraries/library-list-details";
 import { getServerLocale } from "@/i18n/get-server-locale";
 import {
@@ -9,6 +12,7 @@ import {
   getLibraryFolderBreadcrumbs,
   getLibraryListById,
 } from "@/lib/data/libraries";
+import { formatListItemsForTextarea } from "@/lib/lists/format-list-items";
 import { translations } from "@/locales";
 import { requireUser } from "@/lib/supabase/session";
 
@@ -20,7 +24,7 @@ type LibraryListDetailsPageProps = {
 };
 
 export default async function LibraryListDetailsPage({ params }: LibraryListDetailsPageProps) {
-  const [{ libraryId, listId }, locale] = await Promise.all([
+  const [{ libraryId, listId }, locale, user] = await Promise.all([
     params,
     getServerLocale(),
     requireUser(),
@@ -48,6 +52,7 @@ export default async function LibraryListDetailsPage({ params }: LibraryListDeta
   const backHref = currentList.parentFolderId
     ? `/libraries/${currentLibrary.id}/folders/${currentList.parentFolderId}`
     : `/libraries/${currentLibrary.id}`;
+  const canEdit = currentLibrary.ownerId === user.id;
 
   return (
     <div className="space-y-7">
@@ -90,7 +95,20 @@ export default async function LibraryListDetailsPage({ params }: LibraryListDeta
 
       <LibraryListDetails
         backHref={backHref}
+        canEdit={canEdit}
         downloadAction={downloadLibraryListAction.bind(null, currentLibrary.id, currentList.id)}
+        editAction={
+          canEdit ? updateLibraryListAction.bind(null, currentLibrary.id, currentList.id) : undefined
+        }
+        initialEditValues={
+          canEdit
+            ? {
+                title: currentList.title,
+                description: currentList.description ?? "",
+                content: formatListItemsForTextarea(currentList.items),
+              }
+            : undefined
+        }
         libraryTitle={currentLibrary.title}
         list={currentList}
       />

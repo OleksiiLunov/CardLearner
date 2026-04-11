@@ -13,6 +13,7 @@ import {
   getLibraryById,
   getLibraryFolderById,
   getLibraryListById,
+  updateLibraryListWithItems,
   updateLibrary,
 } from "@/lib/data/libraries";
 import { parseListItemsFromMultilineInput } from "@/lib/lists/parse-list-items";
@@ -419,6 +420,59 @@ export async function createNestedLibraryListAction(
   revalidatePath(`/libraries/${currentLibrary.id}`);
   revalidatePath(`/libraries/${currentLibrary.id}/folders/${currentParentFolder.id}`);
   redirect(`/libraries/${currentLibrary.id}/lists/${createdList.id}`);
+}
+
+export async function updateLibraryListAction(
+  libraryId: string,
+  listId: string,
+  _previousState: LibraryListFormState,
+  formData: FormData,
+): Promise<LibraryListFormState> {
+  const user = await requireAuthenticatedUser();
+  const [library, libraryList] = await Promise.all([
+    getLibraryById(libraryId),
+    getLibraryListById(libraryId, listId),
+  ]);
+
+  if (!library || library.ownerId !== user.id || !libraryList) {
+    notFound();
+  }
+
+  const currentLibrary = library;
+  const currentList = libraryList;
+  const input = validateLibraryListInput(formData);
+
+  if (input.fieldErrorKeys) {
+    return buildListErrorState(input);
+  }
+
+  let updatedList;
+
+  try {
+    updatedList = await updateLibraryListWithItems({
+      libraryId: currentLibrary.id,
+      libraryListId: currentList.id,
+      title: input.title,
+      description: input.description,
+      items: input.items,
+    });
+  } catch {
+    return buildListErrorState(input, undefined, "libraries.updateListError");
+  }
+
+  if (!updatedList) {
+    notFound();
+  }
+
+  revalidatePath("/libraries");
+  revalidatePath(`/libraries/${currentLibrary.id}`);
+
+  if (currentList.parentFolderId) {
+    revalidatePath(`/libraries/${currentLibrary.id}/folders/${currentList.parentFolderId}`);
+  }
+
+  revalidatePath(`/libraries/${currentLibrary.id}/lists/${currentList.id}`);
+  redirect(`/libraries/${currentLibrary.id}/lists/${updatedList.id}`);
 }
 
 export async function downloadLibraryListAction(libraryId: string, listId: string) {

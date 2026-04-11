@@ -136,6 +136,14 @@ type CreateNestedLibraryListInput = {
   items: ParsedListItemInput[];
 };
 
+type UpdateLibraryListInput = {
+  libraryId: string;
+  libraryListId: string;
+  title: string;
+  description: string | null;
+  items: ParsedListItemInput[];
+};
+
 export async function getLibrariesForBrowsing(): Promise<LibraryBrowseItem[]> {
   return prisma.library.findMany({
     ...libraryBrowseArgs,
@@ -282,6 +290,53 @@ export async function createNestedLibraryList(
     },
     ...libraryListSummaryArgs,
   });
+}
+
+export async function updateLibraryListWithItems(
+  input: UpdateLibraryListInput,
+): Promise<LibraryListSummary | null> {
+  const existingList = await prisma.libraryList.findFirst({
+    where: {
+      id: input.libraryListId,
+      libraryId: input.libraryId,
+    },
+    select: {
+      id: true,
+    },
+  });
+
+  if (!existingList) {
+    return null;
+  }
+
+  const currentList = existingList;
+  const [updatedList] = await prisma.$transaction([
+    prisma.libraryList.update({
+      where: {
+        id: currentList.id,
+      },
+      data: {
+        title: input.title,
+        description: input.description,
+      },
+      ...libraryListSummaryArgs,
+    }),
+    prisma.libraryListItem.deleteMany({
+      where: {
+        libraryListId: currentList.id,
+      },
+    }),
+    prisma.libraryListItem.createMany({
+      data: input.items.map((item, index) => ({
+        libraryListId: currentList.id,
+        front: item.front,
+        back: item.back,
+        position: item.position ?? index,
+      })),
+    }),
+  ]);
+
+  return updatedList;
 }
 
 export async function createPrivateListFromLibraryList(
