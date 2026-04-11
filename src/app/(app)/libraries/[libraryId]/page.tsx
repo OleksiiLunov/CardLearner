@@ -52,6 +52,7 @@ export default async function LibraryDetailsPage({ params }: LibraryDetailsPageP
       topContent={
         isOwner ? (
           <LibraryOwnerActions
+            deleteLibraryId={currentLibrary.id}
             editLibraryAction={updateLibraryAction.bind(null, currentLibrary.id)}
             initialLibraryValues={{
               title: currentLibrary.title,

@@ -9,6 +9,7 @@ import type {
 } from "@/app/actions/libraries";
 import { CreateRootFolderForm } from "@/components/libraries/create-root-folder-form";
 import { CreateRootListForm } from "@/components/libraries/create-root-list-form";
+import { DeleteLibraryDialog } from "@/components/libraries/delete-library-dialog";
 import { EditLibraryForm } from "@/components/libraries/edit-library-form";
 import {
   AlertDialog,
@@ -23,6 +24,7 @@ import { Button } from "@/components/ui/button";
 import { useTranslation } from "@/i18n/useTranslation";
 
 type LibraryOwnerActionsProps = {
+  deleteLibraryId: string;
   editLibraryAction: (
     state: LibraryFormState,
     formData: FormData,
@@ -80,6 +82,7 @@ function OwnerActionDialog({
 }
 
 export function LibraryOwnerActions({
+  deleteLibraryId,
   editLibraryAction,
   initialLibraryValues,
   createFolderAction,
@@ -111,6 +114,10 @@ export function LibraryOwnerActions({
         >
           <CreateRootListForm action={createListAction} />
         </OwnerActionDialog>
+        <DeleteLibraryDialog
+          libraryId={deleteLibraryId}
+          libraryTitle={initialLibraryValues.title}
+        />
       </div>
     </section>
   );

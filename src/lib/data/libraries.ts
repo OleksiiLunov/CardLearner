@@ -226,6 +226,15 @@ export async function updateLibrary(input: UpdateLibraryInput): Promise<LibraryB
   });
 }
 
+export async function deleteLibrary(libraryId: string): Promise<LibraryBrowseItem> {
+  return prisma.library.delete({
+    where: {
+      id: libraryId,
+    },
+    ...libraryBrowseArgs,
+  });
+}
+
 export async function createRootLibraryFolder(
   input: CreateRootLibraryFolderInput,
 ): Promise<LibraryFolderSummary> {

@@ -7,6 +7,7 @@ import {
   createLibrary,
   createNestedLibraryFolder,
   createNestedLibraryList,
+  deleteLibrary,
   createPrivateListFromLibraryList,
   createRootLibraryFolder,
   createRootLibraryList,
@@ -179,6 +180,22 @@ export async function updateLibraryAction(
   revalidatePath("/libraries");
   revalidatePath(`/libraries/${currentLibrary.id}`);
   redirect(`/libraries/${currentLibrary.id}`);
+}
+
+export async function deleteLibraryAction(libraryId: string) {
+  const user = await requireAuthenticatedUser();
+  const library = await getLibraryById(libraryId);
+
+  if (!library || library.ownerId !== user.id) {
+    notFound();
+  }
+
+  const currentLibrary = library;
+
+  await deleteLibrary(currentLibrary.id);
+
+  revalidatePath("/libraries");
+  redirect("/libraries");
 }
 
 function validateLibraryFolderInput(formData: FormData): {
