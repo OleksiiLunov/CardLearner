@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { downloadLibraryListAction } from "@/app/actions/libraries";
@@ -56,30 +57,28 @@ export default async function LibraryListDetailsPage({ params }: LibraryListDeta
       >
         <ol className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
           <li className="flex items-center gap-2">
-            <a href="/libraries" className="transition-colors hover:text-foreground">
+            <Link href="/libraries" className="transition-colors hover:text-foreground">
               {t.navigation.libraries}
-            </a>
+            </Link>
             <span aria-hidden="true">/</span>
           </li>
           <li className="flex items-center gap-2">
-            <a
+            <Link
               href={`/libraries/${currentLibrary.id}`}
               className="transition-colors hover:text-foreground"
             >
               {currentLibrary.title}
-            </a>
-            {(folderBreadcrumbs && folderBreadcrumbs.length > 0) || true ? (
-              <span aria-hidden="true">/</span>
-            ) : null}
+            </Link>
+            <span aria-hidden="true">/</span>
           </li>
           {folderBreadcrumbs?.map((folder) => (
             <li key={folder.id} className="flex items-center gap-2">
-              <a
+              <Link
                 href={`/libraries/${currentLibrary.id}/folders/${folder.id}`}
                 className="transition-colors hover:text-foreground"
               >
                 {folder.title}
-              </a>
+              </Link>
               <span aria-hidden="true">/</span>
             </li>
           ))}

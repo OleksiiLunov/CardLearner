@@ -322,8 +322,10 @@ export async function createRootLibraryListAction(
     return buildListErrorState(input);
   }
 
+  let createdList;
+
   try {
-    await createRootLibraryList({
+    createdList = await createRootLibraryList({
       libraryId: currentLibrary.id,
       ownerId: user.id,
       title: input.title,
@@ -336,7 +338,7 @@ export async function createRootLibraryListAction(
 
   revalidatePath("/libraries");
   revalidatePath(`/libraries/${currentLibrary.id}`);
-  redirect(`/libraries/${currentLibrary.id}`);
+  redirect(`/libraries/${currentLibrary.id}/lists/${createdList.id}`);
 }
 
 export async function createNestedLibraryListAction(
@@ -363,8 +365,10 @@ export async function createNestedLibraryListAction(
     return buildListErrorState(input);
   }
 
+  let createdList;
+
   try {
-    await createNestedLibraryList({
+    createdList = await createNestedLibraryList({
       libraryId: currentLibrary.id,
       parentFolderId: currentParentFolder.id,
       ownerId: user.id,
@@ -379,7 +383,7 @@ export async function createNestedLibraryListAction(
   revalidatePath("/libraries");
   revalidatePath(`/libraries/${currentLibrary.id}`);
   revalidatePath(`/libraries/${currentLibrary.id}/folders/${currentParentFolder.id}`);
-  redirect(`/libraries/${currentLibrary.id}/folders/${currentParentFolder.id}`);
+  redirect(`/libraries/${currentLibrary.id}/lists/${createdList.id}`);
 }
 
 export async function downloadLibraryListAction(libraryId: string, listId: string) {
