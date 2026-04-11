@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 
 import {
+  updateLibraryAction,
   createRootLibraryFolderAction,
   createRootLibraryListAction,
 } from "@/app/actions/libraries";
@@ -51,6 +52,11 @@ export default async function LibraryDetailsPage({ params }: LibraryDetailsPageP
       topContent={
         isOwner ? (
           <LibraryOwnerActions
+            editLibraryAction={updateLibraryAction.bind(null, currentLibrary.id)}
+            initialLibraryValues={{
+              title: currentLibrary.title,
+              description: currentLibrary.description ?? "",
+            }}
             createFolderAction={createRootLibraryFolderAction.bind(null, currentLibrary.id)}
             createListAction={createRootLibraryListAction.bind(null, currentLibrary.id)}
           />

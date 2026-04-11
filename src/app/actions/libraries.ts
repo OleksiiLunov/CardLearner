@@ -13,6 +13,7 @@ import {
   getLibraryById,
   getLibraryFolderById,
   getLibraryListById,
+  updateLibrary,
 } from "@/lib/data/libraries";
 import { parseListItemsFromMultilineInput } from "@/lib/lists/parse-list-items";
 import { getCurrentUser } from "@/lib/supabase/session";
@@ -142,6 +143,40 @@ export async function createLibraryAction(
 
   revalidatePath("/libraries");
   redirect(`/libraries/${library.id}`);
+}
+
+export async function updateLibraryAction(
+  libraryId: string,
+  _previousState: LibraryFormState,
+  formData: FormData,
+): Promise<LibraryFormState> {
+  const user = await requireAuthenticatedUser();
+  const library = await getLibraryById(libraryId);
+
+  if (!library || library.ownerId !== user.id) {
+    notFound();
+  }
+
+  const currentLibrary = library;
+  const input = validateLibraryInput(formData);
+
+  if (input.fieldErrorKeys) {
+    return buildErrorState(input);
+  }
+
+  try {
+    await updateLibrary({
+      libraryId: currentLibrary.id,
+      title: input.title,
+      description: input.description,
+    });
+  } catch {
+    return buildErrorState(input, undefined, "libraries.updateError");
+  }
+
+  revalidatePath("/libraries");
+  revalidatePath(`/libraries/${currentLibrary.id}`);
+  redirect(`/libraries/${currentLibrary.id}`);
 }
 
 function validateLibraryFolderInput(formData: FormData): {

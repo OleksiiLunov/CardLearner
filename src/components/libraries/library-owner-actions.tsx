@@ -3,11 +3,13 @@
 import type { ReactNode } from "react";
 
 import type {
+  LibraryFormState,
   LibraryFolderFormState,
   LibraryListFormState,
 } from "@/app/actions/libraries";
 import { CreateRootFolderForm } from "@/components/libraries/create-root-folder-form";
 import { CreateRootListForm } from "@/components/libraries/create-root-list-form";
+import { EditLibraryForm } from "@/components/libraries/edit-library-form";
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -21,6 +23,14 @@ import { Button } from "@/components/ui/button";
 import { useTranslation } from "@/i18n/useTranslation";
 
 type LibraryOwnerActionsProps = {
+  editLibraryAction: (
+    state: LibraryFormState,
+    formData: FormData,
+  ) => Promise<LibraryFormState>;
+  initialLibraryValues: {
+    title: string;
+    description: string;
+  };
   createFolderAction: (
     state: LibraryFolderFormState,
     formData: FormData,
@@ -70,6 +80,8 @@ function OwnerActionDialog({
 }
 
 export function LibraryOwnerActions({
+  editLibraryAction,
+  initialLibraryValues,
   createFolderAction,
   createListAction,
 }: LibraryOwnerActionsProps) {
@@ -78,6 +90,13 @@ export function LibraryOwnerActions({
   return (
     <section className="rounded-[2rem] border border-border bg-card/80 p-5 shadow-sm backdrop-blur">
       <div className="flex flex-wrap gap-2">
+        <OwnerActionDialog
+          description={t("libraries.editDescription")}
+          title={t("libraries.editLibrary")}
+          triggerLabel={t("common.edit")}
+        >
+          <EditLibraryForm action={editLibraryAction} initialValues={initialLibraryValues} />
+        </OwnerActionDialog>
         <OwnerActionDialog
           description={t("libraries.createFolderDescription")}
           title={t("libraries.createFolder")}

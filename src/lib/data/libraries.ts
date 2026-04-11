@@ -100,6 +100,12 @@ type CreateLibraryInput = {
   description: string | null;
 };
 
+type UpdateLibraryInput = {
+  libraryId: string;
+  title: string;
+  description: string | null;
+};
+
 type CreateRootLibraryFolderInput = {
   libraryId: string;
   ownerId: string;
@@ -186,6 +192,19 @@ export async function createLibrary(input: CreateLibraryInput): Promise<LibraryB
   return prisma.library.create({
     data: {
       ownerId: input.ownerId,
+      title: input.title,
+      description: input.description,
+    },
+    ...libraryBrowseArgs,
+  });
+}
+
+export async function updateLibrary(input: UpdateLibraryInput): Promise<LibraryBrowseItem> {
+  return prisma.library.update({
+    where: {
+      id: input.libraryId,
+    },
+    data: {
       title: input.title,
       description: input.description,
     },
