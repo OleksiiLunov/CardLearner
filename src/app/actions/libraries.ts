@@ -8,6 +8,7 @@ import {
   createNestedLibraryFolder,
   createNestedLibraryList,
   deleteLibrary,
+  deleteLibraryFolder,
   deleteLibraryList,
   createPrivateListFromLibraryList,
   createRootLibraryFolder,
@@ -344,6 +345,37 @@ export async function updateLibraryFolderAction(
   revalidatePath(`/libraries/${currentLibrary.id}`);
   revalidatePath(`/libraries/${currentLibrary.id}/folders/${currentFolder.id}`);
   redirect(`/libraries/${currentLibrary.id}/folders/${currentFolder.id}`);
+}
+
+export async function deleteLibraryFolderAction(libraryId: string, folderId: string) {
+  const user = await requireAuthenticatedUser();
+  const [library, folder] = await Promise.all([
+    getLibraryById(libraryId),
+    getLibraryFolderById(libraryId, folderId),
+  ]);
+
+  if (!library || library.ownerId !== user.id || !folder) {
+    notFound();
+  }
+
+  const currentLibrary = library;
+  const currentFolder = folder;
+  const deletedFolder = await deleteLibraryFolder(currentLibrary.id, currentFolder.id);
+
+  if (!deletedFolder) {
+    notFound();
+  }
+
+  revalidatePath("/libraries");
+  revalidatePath(`/libraries/${currentLibrary.id}`);
+  revalidatePath(`/libraries/${currentLibrary.id}/folders/${currentFolder.id}`);
+
+  if (deletedFolder.parentFolderId) {
+    revalidatePath(`/libraries/${currentLibrary.id}/folders/${deletedFolder.parentFolderId}`);
+    redirect(`/libraries/${currentLibrary.id}/folders/${deletedFolder.parentFolderId}`);
+  }
+
+  redirect(`/libraries/${currentLibrary.id}`);
 }
 
 function validateLibraryListInput(formData: FormData): {

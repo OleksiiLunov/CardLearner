@@ -1,6 +1,7 @@
 "use client";
 
 import type { LibraryFolderFormState } from "@/app/actions/libraries";
+import { DeleteLibraryFolderDialog } from "@/components/libraries/delete-library-folder-dialog";
 import { EditLibraryFolderForm } from "@/components/libraries/edit-library-folder-form";
 import { CreateNestedListDialogAction } from "@/components/libraries/create-nested-list-dialog-action";
 import { CreateRootFolderForm } from "@/components/libraries/create-root-folder-form";
@@ -18,6 +19,11 @@ import { useTranslation } from "@/i18n/useTranslation";
 
 type CreateNestedFolderDialogActionProps = {
   action: (state: LibraryFolderFormState, formData: FormData) => Promise<LibraryFolderFormState>;
+  deleteActionTarget?: {
+    folderId: string;
+    folderTitle: string;
+    libraryId: string;
+  };
   editAction?: (
     state: LibraryFolderFormState,
     formData: FormData,
@@ -33,6 +39,7 @@ type CreateNestedFolderDialogActionProps = {
 
 export function CreateNestedFolderDialogAction({
   action,
+  deleteActionTarget,
   editAction,
   initialEditValues,
   createListAction,
@@ -85,6 +92,13 @@ export function CreateNestedFolderDialogAction({
           </AlertDialogContent>
         </AlertDialog>
         {createListAction ? <CreateNestedListDialogAction action={createListAction} /> : null}
+        {deleteActionTarget ? (
+          <DeleteLibraryFolderDialog
+            folderId={deleteActionTarget.folderId}
+            folderTitle={deleteActionTarget.folderTitle}
+            libraryId={deleteActionTarget.libraryId}
+          />
+        ) : null}
       </div>
     </section>
   );

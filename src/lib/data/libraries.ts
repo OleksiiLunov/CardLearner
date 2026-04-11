@@ -156,6 +156,12 @@ type DeleteLibraryListResult = {
   parentFolderId: string | null;
 };
 
+type DeleteLibraryFolderResult = {
+  id: string;
+  libraryId: string;
+  parentFolderId: string | null;
+};
+
 export async function getLibrariesForBrowsing(): Promise<LibraryBrowseItem[]> {
   return prisma.library.findMany({
     ...libraryBrowseArgs,
@@ -409,6 +415,69 @@ export async function deleteLibraryList(
   });
 
   return currentList;
+}
+
+export async function deleteLibraryFolder(
+  libraryId: string,
+  folderId: string,
+): Promise<DeleteLibraryFolderResult | null> {
+  const existingFolder = await getLibraryFolderById(libraryId, folderId);
+
+  if (!existingFolder) {
+    return null;
+  }
+
+  const currentFolder = existingFolder;
+  const folderIdsToDelete = new Set<string>([currentFolder.id]);
+  let pendingFolderIds: string[] = [currentFolder.id];
+
+  while (pendingFolderIds.length > 0) {
+    const childFolders = await prisma.libraryFolder.findMany({
+      where: {
+        libraryId,
+        parentFolderId: {
+          in: pendingFolderIds,
+        },
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    const nextPendingFolderIds = childFolders
+      .map((folder) => folder.id)
+      .filter((childFolderId) => !folderIdsToDelete.has(childFolderId));
+
+    nextPendingFolderIds.forEach((childFolderId) => {
+      folderIdsToDelete.add(childFolderId);
+    });
+
+    pendingFolderIds = nextPendingFolderIds;
+  }
+
+  const folderIds = Array.from(folderIdsToDelete);
+
+  await prisma.$transaction([
+    prisma.libraryList.deleteMany({
+      where: {
+        libraryId,
+        parentFolderId: {
+          in: folderIds,
+        },
+      },
+    }),
+    prisma.libraryFolder.delete({
+      where: {
+        id: currentFolder.id,
+      },
+    }),
+  ]);
+
+  return {
+    id: currentFolder.id,
+    libraryId: currentFolder.libraryId,
+    parentFolderId: currentFolder.parentFolderId,
+  };
 }
 
 export async function createPrivateListFromLibraryList(
