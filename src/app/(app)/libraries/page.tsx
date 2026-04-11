@@ -1,5 +1,7 @@
 import Link from "next/link";
 
+import { createLibraryAction } from "@/app/actions/libraries";
+import { CreateLibraryForm } from "@/components/libraries/create-library-form";
 import { SectionIntro } from "@/components/ui/section-intro";
 import { getLibrariesForBrowsing, getLibrariesForOwner } from "@/lib/data/libraries";
 import { getServerLocale } from "@/i18n/get-server-locale";
@@ -76,6 +78,8 @@ export default async function LibrariesPage({ searchParams }: LibrariesPageProps
           </Link>
         </div>
       </section>
+
+      <CreateLibraryForm action={createLibraryAction} />
 
       {libraries.length === 0 ? (
         <section className="rounded-[2.25rem] border border-dashed border-border bg-card/70 p-6 text-center shadow-sm backdrop-blur">
