@@ -132,9 +132,10 @@ export function LibraryNavigationContent({
               ) : (
                 <div className="grid gap-3">
                   {lists.map((list) => (
-                    <div
+                    <Link
                       key={list.id}
-                      className="rounded-[1.5rem] border border-border bg-background/70 p-4 shadow-sm"
+                      href={`/libraries/${list.libraryId}/lists/${list.id}`}
+                      className="rounded-[1.5rem] border border-border bg-background/70 p-4 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-secondary/30 hover:shadow-md active:scale-[0.99]"
                     >
                       <div className="space-y-2">
                         <h3 className="text-base font-semibold tracking-tight text-foreground">
@@ -146,7 +147,7 @@ export function LibraryNavigationContent({
                           </p>
                         ) : null}
                       </div>
-                    </div>
+                    </Link>
                   ))}
                 </div>
               )}

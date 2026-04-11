@@ -7,10 +7,12 @@ import {
   createLibrary,
   createNestedLibraryFolder,
   createNestedLibraryList,
+  createPrivateListFromLibraryList,
   createRootLibraryFolder,
   createRootLibraryList,
   getLibraryById,
   getLibraryFolderById,
+  getLibraryListById,
 } from "@/lib/data/libraries";
 import { parseListItemsFromMultilineInput } from "@/lib/lists/parse-list-items";
 import { getCurrentUser } from "@/lib/supabase/session";
@@ -378,4 +380,23 @@ export async function createNestedLibraryListAction(
   revalidatePath(`/libraries/${currentLibrary.id}`);
   revalidatePath(`/libraries/${currentLibrary.id}/folders/${currentParentFolder.id}`);
   redirect(`/libraries/${currentLibrary.id}/folders/${currentParentFolder.id}`);
+}
+
+export async function downloadLibraryListAction(libraryId: string, listId: string) {
+  const user = await requireAuthenticatedUser();
+  const [library, libraryList] = await Promise.all([
+    getLibraryById(libraryId),
+    getLibraryListById(libraryId, listId),
+  ]);
+
+  if (!library || !libraryList) {
+    notFound();
+  }
+
+  const currentLibraryList = libraryList;
+
+  await createPrivateListFromLibraryList(library.id, currentLibraryList.id, user.id);
+
+  revalidatePath("/lists");
+  redirect("/lists");
 }

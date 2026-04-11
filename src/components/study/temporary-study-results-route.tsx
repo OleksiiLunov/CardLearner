@@ -1,17 +1,25 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 
 import { StudyResults } from "@/components/study/study-results";
 import { TemporaryStudyFallback } from "@/components/study/temporary-study-fallback";
 import { useTranslation } from "@/i18n/useTranslation";
-import { getTemporaryStudyResultsStorageKey, readTemporaryStudy, TEMP_FAILED_STUDY_QUERY_VALUE, TEMP_FAILED_STUDY_SOURCE_ID } from "@/lib/study/temp-study-storage";
+import {
+  getTemporaryStudyFallbackHref,
+  getTemporaryStudyResultsStorageKey,
+  isTemporaryStudySourceQueryValue,
+  readTemporaryStudy,
+} from "@/lib/study/temp-study-storage";
 import type { TemporaryStudyPayload } from "@/lib/study/types";
 
 export function TemporaryStudyResultsRoute() {
   const { t } = useTranslation();
+  const searchParams = useSearchParams();
   const [payload, setPayload] = useState<TemporaryStudyPayload | null>(null);
   const [loaded, setLoaded] = useState(false);
+  const source = searchParams.get("source");
 
   useEffect(() => {
     setPayload(readTemporaryStudy());
@@ -27,18 +35,24 @@ export function TemporaryStudyResultsRoute() {
   }
 
   if (!payload) {
-    return <TemporaryStudyFallback backHref="/lists/temp/failed" />;
+    return (
+      <TemporaryStudyFallback
+        backHref={getTemporaryStudyFallbackHref(
+          isTemporaryStudySourceQueryValue(source) ? source : null,
+        )}
+      />
+    );
   }
 
   const currentPayload = payload;
 
   return (
     <StudyResults
-      listId={TEMP_FAILED_STUDY_SOURCE_ID}
+      listId={currentPayload.source.sourceId}
       listName={currentPayload.title}
-      resultsStorageKey={getTemporaryStudyResultsStorageKey()}
-      studyAgainHref={`/study/setup?source=${encodeURIComponent(TEMP_FAILED_STUDY_QUERY_VALUE)}`}
-      missingBackHref="/lists/temp/failed"
+      resultsStorageKey={getTemporaryStudyResultsStorageKey(currentPayload.source.sourceId)}
+      studyAgainHref={`/study/setup?source=${encodeURIComponent(currentPayload.source.queryValue)}`}
+      missingBackHref={currentPayload.source.backHref}
     />
   );
 }

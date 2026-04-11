@@ -12,7 +12,7 @@ import {
   clearTemporaryStudyResults,
   hasTemporaryStudy,
   hasTemporaryStudyResults,
-  TEMP_FAILED_STUDY_QUERY_VALUE,
+  isTemporaryStudySourceQueryValue,
 } from "@/lib/study/temp-study-storage";
 
 function isActiveTemporaryFailedListFlow(pathname: string, source: string | null) {
@@ -21,7 +21,7 @@ function isActiveTemporaryFailedListFlow(pathname: string, source: string | null
   }
 
   if (pathname === "/study/setup" || pathname === "/study/session" || pathname === "/study/results") {
-    return source === TEMP_FAILED_STUDY_QUERY_VALUE;
+    return isTemporaryStudySourceQueryValue(source);
   }
 
   return false;

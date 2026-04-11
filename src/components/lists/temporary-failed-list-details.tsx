@@ -150,6 +150,9 @@ export function TemporaryFailedListDetails() {
       source: {
         listId: resolvedPayload.source.listId,
         listName: resolvedPayload.source.listName,
+        sourceId: TEMP_FAILED_STUDY_QUERY_VALUE,
+        queryValue: TEMP_FAILED_STUDY_QUERY_VALUE,
+        backHref: "/lists/temp/failed",
       },
     });
     router.push(`/study/setup?source=${encodeURIComponent(TEMP_FAILED_STUDY_QUERY_VALUE)}`);

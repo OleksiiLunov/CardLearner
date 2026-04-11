@@ -41,6 +41,30 @@ const libraryListSummaryArgs = Prisma.validator<Prisma.LibraryListDefaultArgs>()
   },
 });
 
+const libraryListDetailsArgs = Prisma.validator<Prisma.LibraryListDefaultArgs>()({
+  select: {
+    id: true,
+    libraryId: true,
+    parentFolderId: true,
+    ownerId: true,
+    title: true,
+    description: true,
+    createdAt: true,
+    updatedAt: true,
+    items: {
+      select: {
+        id: true,
+        front: true,
+        back: true,
+        position: true,
+      },
+      orderBy: {
+        position: "asc",
+      },
+    },
+  },
+});
+
 export type LibraryBrowseItem = Prisma.LibraryGetPayload<{
   select: typeof libraryBrowseArgs.select;
 }>;
@@ -51,6 +75,10 @@ export type LibraryFolderSummary = Prisma.LibraryFolderGetPayload<{
 
 export type LibraryListSummary = Prisma.LibraryListGetPayload<{
   select: typeof libraryListSummaryArgs.select;
+}>;
+
+export type LibraryListDetails = Prisma.LibraryListGetPayload<{
+  select: typeof libraryListDetailsArgs.select;
 }>;
 
 export type LibraryRootContents = {
@@ -141,6 +169,19 @@ export async function getLibraryFolderById(
   });
 }
 
+export async function getLibraryListById(
+  libraryId: string,
+  listId: string,
+): Promise<LibraryListDetails | null> {
+  return prisma.libraryList.findFirst({
+    where: {
+      id: listId,
+      libraryId,
+    },
+    ...libraryListDetailsArgs,
+  });
+}
+
 export async function createLibrary(input: CreateLibraryInput): Promise<LibraryBrowseItem> {
   return prisma.library.create({
     data: {
@@ -221,6 +262,35 @@ export async function createNestedLibraryList(
       },
     },
     ...libraryListSummaryArgs,
+  });
+}
+
+export async function createPrivateListFromLibraryList(
+  libraryId: string,
+  listId: string,
+  userId: string,
+): Promise<{ id: string } | null> {
+  const libraryList = await getLibraryListById(libraryId, listId);
+
+  if (!libraryList) {
+    return null;
+  }
+
+  return prisma.list.create({
+    data: {
+      userId,
+      name: libraryList.title,
+      items: {
+        create: libraryList.items.map((item, index) => ({
+          front: item.front,
+          back: item.back,
+          position: item.position ?? index,
+        })),
+      },
+    },
+    select: {
+      id: true,
+    },
   });
 }
 

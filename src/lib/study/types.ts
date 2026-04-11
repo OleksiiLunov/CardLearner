@@ -8,13 +8,18 @@ export type StudyCard = {
   position: number;
 };
 
+export type TemporaryStudyKind = "temp-failed" | "library-list";
+
 export type TemporaryStudyPayload = {
-  kind: "temp-failed";
+  kind: TemporaryStudyKind;
   title: string;
   items: StudyCard[];
   source: {
     listId: string;
     listName: string;
+    sourceId: string;
+    queryValue: string;
+    backHref: string;
   };
 };
 
