@@ -96,6 +96,14 @@ export default async function LibraryListDetailsPage({ params }: LibraryListDeta
       <LibraryListDetails
         backHref={backHref}
         canEdit={canEdit}
+        deleteActionTarget={
+          canEdit
+            ? {
+                libraryId: currentLibrary.id,
+                listId: currentList.id,
+              }
+            : undefined
+        }
         downloadAction={downloadLibraryListAction.bind(null, currentLibrary.id, currentList.id)}
         editAction={
           canEdit ? updateLibraryListAction.bind(null, currentLibrary.id, currentList.id) : undefined

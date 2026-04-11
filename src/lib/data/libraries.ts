@@ -150,6 +150,12 @@ type UpdateLibraryListInput = {
   items: ParsedListItemInput[];
 };
 
+type DeleteLibraryListResult = {
+  id: string;
+  libraryId: string;
+  parentFolderId: string | null;
+};
+
 export async function getLibrariesForBrowsing(): Promise<LibraryBrowseItem[]> {
   return prisma.library.findMany({
     ...libraryBrowseArgs,
@@ -372,6 +378,37 @@ export async function updateLibraryListWithItems(
   ]);
 
   return updatedList;
+}
+
+export async function deleteLibraryList(
+  libraryId: string,
+  listId: string,
+): Promise<DeleteLibraryListResult | null> {
+  const existingList = await prisma.libraryList.findFirst({
+    where: {
+      id: listId,
+      libraryId,
+    },
+    select: {
+      id: true,
+      libraryId: true,
+      parentFolderId: true,
+    },
+  });
+
+  if (!existingList) {
+    return null;
+  }
+
+  const currentList = existingList;
+
+  await prisma.libraryList.delete({
+    where: {
+      id: currentList.id,
+    },
+  });
+
+  return currentList;
 }
 
 export async function createPrivateListFromLibraryList(

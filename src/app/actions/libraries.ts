@@ -8,6 +8,7 @@ import {
   createNestedLibraryFolder,
   createNestedLibraryList,
   deleteLibrary,
+  deleteLibraryList,
   createPrivateListFromLibraryList,
   createRootLibraryFolder,
   createRootLibraryList,
@@ -550,4 +551,35 @@ export async function downloadLibraryListAction(libraryId: string, listId: strin
 
   revalidatePath("/lists");
   redirect("/lists");
+}
+
+export async function deleteLibraryListAction(libraryId: string, listId: string) {
+  const user = await requireAuthenticatedUser();
+  const [library, libraryList] = await Promise.all([
+    getLibraryById(libraryId),
+    getLibraryListById(libraryId, listId),
+  ]);
+
+  if (!library || library.ownerId !== user.id || !libraryList) {
+    notFound();
+  }
+
+  const currentLibrary = library;
+  const currentList = libraryList;
+  const deletedList = await deleteLibraryList(currentLibrary.id, currentList.id);
+
+  if (!deletedList) {
+    notFound();
+  }
+
+  revalidatePath("/libraries");
+  revalidatePath(`/libraries/${currentLibrary.id}`);
+  revalidatePath(`/libraries/${currentLibrary.id}/lists/${currentList.id}`);
+
+  if (deletedList.parentFolderId) {
+    revalidatePath(`/libraries/${currentLibrary.id}/folders/${deletedList.parentFolderId}`);
+    redirect(`/libraries/${currentLibrary.id}/folders/${deletedList.parentFolderId}`);
+  }
+
+  redirect(`/libraries/${currentLibrary.id}`);
 }

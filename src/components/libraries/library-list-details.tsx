@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import { useRouter } from "next/navigation";
 
 import type { LibraryListFormState } from "@/app/actions/libraries";
+import { DeleteLibraryListDialog } from "@/components/libraries/delete-library-list-dialog";
 import { EditLibraryListForm } from "@/components/libraries/edit-library-list-form";
 import { ListDetailsView } from "@/components/lists/list-details-view";
 import {
@@ -66,6 +67,10 @@ function OwnerActionDialog({
 type LibraryListDetailsProps = {
   backHref: string;
   canEdit: boolean;
+  deleteActionTarget?: {
+    libraryId: string;
+    listId: string;
+  };
   downloadAction: () => Promise<void>;
   editAction?: (state: LibraryListFormState, formData: FormData) => Promise<LibraryListFormState>;
   libraryTitle: string;
@@ -90,6 +95,7 @@ type LibraryListDetailsProps = {
 export function LibraryListDetails({
   backHref,
   canEdit,
+  deleteActionTarget,
   downloadAction,
   editAction,
   initialEditValues,
@@ -148,6 +154,13 @@ export function LibraryListDetails({
             >
               <EditLibraryListForm action={editAction} initialValues={initialEditValues} />
             </OwnerActionDialog>
+          ) : null}
+          {canEdit && deleteActionTarget ? (
+            <DeleteLibraryListDialog
+              libraryId={deleteActionTarget.libraryId}
+              listId={deleteActionTarget.listId}
+              listTitle={list.title}
+            />
           ) : null}
           <form action={downloadAction} className="w-full">
             <Button type="submit" className="w-full">
