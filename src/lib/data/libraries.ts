@@ -78,8 +78,24 @@ type CreateRootLibraryFolderInput = {
   title: string;
 };
 
+type CreateNestedLibraryFolderInput = {
+  libraryId: string;
+  parentFolderId: string;
+  ownerId: string;
+  title: string;
+};
+
 type CreateRootLibraryListInput = {
   libraryId: string;
+  ownerId: string;
+  title: string;
+  description: string | null;
+  items: ParsedListItemInput[];
+};
+
+type CreateNestedLibraryListInput = {
+  libraryId: string;
+  parentFolderId: string;
   ownerId: string;
   title: string;
   description: string | null;
@@ -112,6 +128,19 @@ export async function getLibraryById(libraryId: string): Promise<LibraryBrowseIt
   });
 }
 
+export async function getLibraryFolderById(
+  libraryId: string,
+  folderId: string,
+): Promise<LibraryFolderSummary | null> {
+  return prisma.libraryFolder.findFirst({
+    where: {
+      id: folderId,
+      libraryId,
+    },
+    ...libraryFolderSummaryArgs,
+  });
+}
+
 export async function createLibrary(input: CreateLibraryInput): Promise<LibraryBrowseItem> {
   return prisma.library.create({
     data: {
@@ -137,6 +166,20 @@ export async function createRootLibraryFolder(
   });
 }
 
+export async function createNestedLibraryFolder(
+  input: CreateNestedLibraryFolderInput,
+): Promise<LibraryFolderSummary> {
+  return prisma.libraryFolder.create({
+    data: {
+      libraryId: input.libraryId,
+      parentFolderId: input.parentFolderId,
+      ownerId: input.ownerId,
+      title: input.title,
+    },
+    ...libraryFolderSummaryArgs,
+  });
+}
+
 export async function createRootLibraryList(
   input: CreateRootLibraryListInput,
 ): Promise<LibraryListSummary> {
@@ -144,6 +187,28 @@ export async function createRootLibraryList(
     data: {
       libraryId: input.libraryId,
       parentFolderId: null,
+      ownerId: input.ownerId,
+      title: input.title,
+      description: input.description,
+      items: {
+        create: input.items.map((item, index) => ({
+          front: item.front,
+          back: item.back,
+          position: item.position ?? index,
+        })),
+      },
+    },
+    ...libraryListSummaryArgs,
+  });
+}
+
+export async function createNestedLibraryList(
+  input: CreateNestedLibraryListInput,
+): Promise<LibraryListSummary> {
+  return prisma.libraryList.create({
+    data: {
+      libraryId: input.libraryId,
+      parentFolderId: input.parentFolderId,
       ownerId: input.ownerId,
       title: input.title,
       description: input.description,
@@ -190,13 +255,7 @@ export async function getLibraryFolderContents(
   libraryId: string,
   folderId: string,
 ): Promise<LibraryFolderContents | null> {
-  const folder = await prisma.libraryFolder.findFirst({
-    where: {
-      id: folderId,
-      libraryId,
-    },
-    ...libraryFolderSummaryArgs,
-  });
+  const folder = await getLibraryFolderById(libraryId, folderId);
 
   if (!folder) {
     return null;

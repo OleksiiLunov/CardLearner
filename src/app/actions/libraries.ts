@@ -5,9 +5,12 @@ import { notFound, redirect } from "next/navigation";
 
 import {
   createLibrary,
+  createNestedLibraryFolder,
+  createNestedLibraryList,
   createRootLibraryFolder,
   createRootLibraryList,
   getLibraryById,
+  getLibraryFolderById,
 } from "@/lib/data/libraries";
 import { parseListItemsFromMultilineInput } from "@/lib/lists/parse-list-items";
 import { getCurrentUser } from "@/lib/supabase/session";
@@ -205,6 +208,47 @@ export async function createRootLibraryFolderAction(
   redirect(`/libraries/${currentLibrary.id}`);
 }
 
+export async function createNestedLibraryFolderAction(
+  libraryId: string,
+  parentFolderId: string,
+  _previousState: LibraryFolderFormState,
+  formData: FormData,
+): Promise<LibraryFolderFormState> {
+  const user = await requireAuthenticatedUser();
+  const [library, parentFolder] = await Promise.all([
+    getLibraryById(libraryId),
+    getLibraryFolderById(libraryId, parentFolderId),
+  ]);
+
+  if (!library || library.ownerId !== user.id || !parentFolder) {
+    notFound();
+  }
+
+  const currentLibrary = library;
+  const currentParentFolder = parentFolder;
+  const input = validateLibraryFolderInput(formData);
+
+  if (input.fieldErrorKeys) {
+    return buildFolderErrorState(input);
+  }
+
+  try {
+    await createNestedLibraryFolder({
+      libraryId: currentLibrary.id,
+      parentFolderId: currentParentFolder.id,
+      ownerId: user.id,
+      title: input.title,
+    });
+  } catch {
+    return buildFolderErrorState(input, undefined, "libraries.createNestedFolderError");
+  }
+
+  revalidatePath("/libraries");
+  revalidatePath(`/libraries/${currentLibrary.id}`);
+  revalidatePath(`/libraries/${currentLibrary.id}/folders/${currentParentFolder.id}`);
+  redirect(`/libraries/${currentLibrary.id}/folders/${currentParentFolder.id}`);
+}
+
 function validateLibraryListInput(formData: FormData): {
   title: string;
   description: string | null;
@@ -291,4 +335,47 @@ export async function createRootLibraryListAction(
   revalidatePath("/libraries");
   revalidatePath(`/libraries/${currentLibrary.id}`);
   redirect(`/libraries/${currentLibrary.id}`);
+}
+
+export async function createNestedLibraryListAction(
+  libraryId: string,
+  parentFolderId: string,
+  _previousState: LibraryListFormState,
+  formData: FormData,
+): Promise<LibraryListFormState> {
+  const user = await requireAuthenticatedUser();
+  const [library, parentFolder] = await Promise.all([
+    getLibraryById(libraryId),
+    getLibraryFolderById(libraryId, parentFolderId),
+  ]);
+
+  if (!library || library.ownerId !== user.id || !parentFolder) {
+    notFound();
+  }
+
+  const currentLibrary = library;
+  const currentParentFolder = parentFolder;
+  const input = validateLibraryListInput(formData);
+
+  if (input.fieldErrorKeys) {
+    return buildListErrorState(input);
+  }
+
+  try {
+    await createNestedLibraryList({
+      libraryId: currentLibrary.id,
+      parentFolderId: currentParentFolder.id,
+      ownerId: user.id,
+      title: input.title,
+      description: input.description,
+      items: input.items,
+    });
+  } catch {
+    return buildListErrorState(input, undefined, "libraries.createNestedListError");
+  }
+
+  revalidatePath("/libraries");
+  revalidatePath(`/libraries/${currentLibrary.id}`);
+  revalidatePath(`/libraries/${currentLibrary.id}/folders/${currentParentFolder.id}`);
+  redirect(`/libraries/${currentLibrary.id}/folders/${currentParentFolder.id}`);
 }

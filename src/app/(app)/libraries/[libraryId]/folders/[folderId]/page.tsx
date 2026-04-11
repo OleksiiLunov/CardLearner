@@ -1,5 +1,10 @@
 import { notFound } from "next/navigation";
 
+import {
+  createNestedLibraryFolderAction,
+  createNestedLibraryListAction,
+} from "@/app/actions/libraries";
+import { CreateNestedFolderDialogAction } from "@/components/libraries/create-nested-folder-dialog-action";
 import { LibraryNavigationContent } from "@/components/libraries/library-navigation-content";
 import { getServerLocale } from "@/i18n/get-server-locale";
 import {
@@ -20,7 +25,7 @@ type LibraryFolderDetailsPageProps = {
 export default async function LibraryFolderDetailsPage({
   params,
 }: LibraryFolderDetailsPageProps) {
-  const [{ libraryId, folderId }, locale] = await Promise.all([
+  const [{ libraryId, folderId }, locale, user] = await Promise.all([
     params,
     getServerLocale(),
     requireUser(),
@@ -38,6 +43,7 @@ export default async function LibraryFolderDetailsPage({
 
   const currentLibrary = library;
   const currentFolderContents = folderContents;
+  const isOwner = currentLibrary.ownerId === user.id;
 
   return (
     <LibraryNavigationContent
@@ -58,6 +64,22 @@ export default async function LibraryFolderDetailsPage({
       lists={currentFolderContents.childLists}
       parentTitle={currentLibrary.title}
       sectionTitle={currentFolderContents.folder.title}
+      topContent={
+        isOwner ? (
+          <CreateNestedFolderDialogAction
+            action={createNestedLibraryFolderAction.bind(
+              null,
+              currentLibrary.id,
+              currentFolderContents.folder.id,
+            )}
+            createListAction={createNestedLibraryListAction.bind(
+              null,
+              currentLibrary.id,
+              currentFolderContents.folder.id,
+            )}
+          />
+        ) : null
+      }
       t={{
         emptyFolders: t.libraries.emptyFolders,
         emptyLists: t.libraries.emptyLists,

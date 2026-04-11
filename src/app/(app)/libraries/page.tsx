@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 import { createLibraryAction } from "@/app/actions/libraries";
-import { CreateLibraryForm } from "@/components/libraries/create-library-form";
+import { CreateLibraryDialogAction } from "@/components/libraries/create-library-dialog-action";
 import { SectionIntro } from "@/components/ui/section-intro";
 import { getLibrariesForBrowsing, getLibrariesForOwner } from "@/lib/data/libraries";
 import { getServerLocale } from "@/i18n/get-server-locale";
@@ -53,33 +53,34 @@ export default async function LibrariesPage({ searchParams }: LibrariesPageProps
       />
 
       <section className="rounded-[2rem] border border-border bg-card/80 p-5 shadow-sm backdrop-blur">
-        <div className="flex flex-wrap gap-2">
-          <Link
-            href="/libraries"
-            aria-current={currentScope === "all" ? "page" : undefined}
-            className={`inline-flex min-h-10 items-center justify-center rounded-full px-4 py-2 text-sm font-semibold shadow-sm transition-all duration-200 ${
-              currentScope === "all"
-                ? "bg-primary text-primary-foreground"
-                : "border border-border bg-card text-foreground hover:bg-secondary/70 hover:shadow-md"
-            }`}
-          >
-            {t.libraries.all}
-          </Link>
-          <Link
-            href="/libraries?scope=mine"
-            aria-current={currentScope === "mine" ? "page" : undefined}
-            className={`inline-flex min-h-10 items-center justify-center rounded-full px-4 py-2 text-sm font-semibold shadow-sm transition-all duration-200 ${
-              currentScope === "mine"
-                ? "bg-primary text-primary-foreground"
-                : "border border-border bg-card text-foreground hover:bg-secondary/70 hover:shadow-md"
-            }`}
-          >
-            {t.libraries.mine}
-          </Link>
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-wrap gap-2">
+            <Link
+              href="/libraries"
+              aria-current={currentScope === "all" ? "page" : undefined}
+              className={`inline-flex min-h-10 items-center justify-center rounded-full px-4 py-2 text-sm font-semibold shadow-sm transition-all duration-200 ${
+                currentScope === "all"
+                  ? "bg-primary text-primary-foreground"
+                  : "border border-border bg-card text-foreground hover:bg-secondary/70 hover:shadow-md"
+              }`}
+            >
+              {t.libraries.all}
+            </Link>
+            <Link
+              href="/libraries?scope=mine"
+              aria-current={currentScope === "mine" ? "page" : undefined}
+              className={`inline-flex min-h-10 items-center justify-center rounded-full px-4 py-2 text-sm font-semibold shadow-sm transition-all duration-200 ${
+                currentScope === "mine"
+                  ? "bg-primary text-primary-foreground"
+                  : "border border-border bg-card text-foreground hover:bg-secondary/70 hover:shadow-md"
+              }`}
+            >
+              {t.libraries.mine}
+            </Link>
+          </div>
+          <CreateLibraryDialogAction action={createLibraryAction} />
         </div>
       </section>
-
-      <CreateLibraryForm action={createLibraryAction} />
 
       {libraries.length === 0 ? (
         <section className="rounded-[2.25rem] border border-dashed border-border bg-card/70 p-6 text-center shadow-sm backdrop-blur">
