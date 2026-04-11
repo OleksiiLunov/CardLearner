@@ -132,8 +132,8 @@ export function LibraryNavigationContent({
                 href={item.href}
                 className={
                   item.type === "folder"
-                    ? "group rounded-[1.5rem] border border-border bg-background/80 p-4 transition-all duration-200 hover:-translate-y-0.5 hover:bg-secondary/30 hover:shadow-sm active:scale-[0.99]"
-                    : "group rounded-[1.5rem] border border-border/70 bg-background/55 p-4 transition-all duration-200 hover:-translate-y-0.5 hover:bg-secondary/20 hover:shadow-sm active:scale-[0.99]"
+                    ? "group rounded-[1.5rem] border border-amber-200/80 bg-amber-50/70 p-4 transition-all duration-200 hover:-translate-y-0.5 hover:bg-amber-100/70 hover:shadow-sm active:scale-[0.99]"
+                    : "group rounded-[1.5rem] border border-sky-200/80 bg-sky-50/60 p-4 transition-all duration-200 hover:-translate-y-0.5 hover:bg-sky-100/60 hover:shadow-sm active:scale-[0.99]"
                 }
               >
                 <div className="flex items-start justify-between gap-4">
@@ -141,15 +141,15 @@ export function LibraryNavigationContent({
                     <div className="flex items-center gap-2">
                       {item.type === "folder" ? (
                         <>
-                          <Folder className="h-4 w-4 text-foreground" aria-hidden="true" />
-                          <span className="rounded-full bg-secondary px-2.5 py-1 text-xs font-semibold text-foreground">
+                          <Folder className="h-4 w-4 text-amber-700" aria-hidden="true" />
+                          <span className="rounded-full bg-amber-100 px-2.5 py-1 text-xs font-semibold text-amber-900">
                             {t.foldersHeading}
                           </span>
                         </>
                       ) : (
                         <>
-                          <BookText className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
-                          <span className="rounded-full border border-border bg-background px-2.5 py-1 text-xs font-semibold text-muted-foreground">
+                          <BookText className="h-4 w-4 text-sky-700" aria-hidden="true" />
+                          <span className="rounded-full border border-sky-200 bg-sky-100 px-2.5 py-1 text-xs font-semibold text-sky-900">
                             {t.listsHeading}
                           </span>
                         </>
