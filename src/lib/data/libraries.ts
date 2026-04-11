@@ -63,6 +63,8 @@ export type LibraryFolderContents = {
   childLists: LibraryListSummary[];
 };
 
+export type LibraryFolderBreadcrumbs = LibraryFolderSummary[];
+
 export async function getLibrariesForBrowsing(): Promise<LibraryBrowseItem[]> {
   return prisma.library.findMany({
     ...libraryBrowseArgs,
@@ -161,4 +163,40 @@ export async function getLibraryFolderContents(
     childFolders,
     childLists,
   };
+}
+
+export async function getLibraryFolderBreadcrumbs(
+  libraryId: string,
+  folderId: string,
+): Promise<LibraryFolderBreadcrumbs | null> {
+  const breadcrumbs: LibraryFolderSummary[] = [];
+  const visitedFolderIds = new Set<string>();
+  let currentFolderId: string | null = folderId;
+
+  while (currentFolderId) {
+    if (visitedFolderIds.has(currentFolderId)) {
+      return null;
+    }
+
+    visitedFolderIds.add(currentFolderId);
+
+    const folder: LibraryFolderSummary | null = await prisma.libraryFolder.findFirst({
+      where: {
+        id: currentFolderId,
+        libraryId,
+      },
+      ...libraryFolderSummaryArgs,
+    });
+
+    if (!folder) {
+      return null;
+    }
+
+    breadcrumbs.push(folder);
+    currentFolderId = folder.parentFolderId;
+  }
+
+  breadcrumbs.reverse();
+
+  return breadcrumbs;
 }
