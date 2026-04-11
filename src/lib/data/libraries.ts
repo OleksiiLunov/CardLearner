@@ -71,6 +71,12 @@ type CreateLibraryInput = {
   description: string | null;
 };
 
+type CreateRootLibraryFolderInput = {
+  libraryId: string;
+  ownerId: string;
+  title: string;
+};
+
 export async function getLibrariesForBrowsing(): Promise<LibraryBrowseItem[]> {
   return prisma.library.findMany({
     ...libraryBrowseArgs,
@@ -105,6 +111,20 @@ export async function createLibrary(input: CreateLibraryInput): Promise<LibraryB
       description: input.description,
     },
     ...libraryBrowseArgs,
+  });
+}
+
+export async function createRootLibraryFolder(
+  input: CreateRootLibraryFolderInput,
+): Promise<LibraryFolderSummary> {
+  return prisma.libraryFolder.create({
+    data: {
+      libraryId: input.libraryId,
+      parentFolderId: null,
+      ownerId: input.ownerId,
+      title: input.title,
+    },
+    ...libraryFolderSummaryArgs,
   });
 }
 

@@ -1,9 +1,9 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 
-import { createLibrary } from "@/lib/data/libraries";
+import { createLibrary, createRootLibraryFolder, getLibraryById } from "@/lib/data/libraries";
 import { getCurrentUser } from "@/lib/supabase/session";
 
 export type LibraryFormState = {
@@ -18,6 +18,20 @@ export type LibraryFormState = {
   values?: {
     title: string;
     description: string;
+  };
+};
+
+export type LibraryFolderFormState = {
+  formError?: string;
+  formErrorKey?: string;
+  fieldErrors?: {
+    title?: string;
+  };
+  fieldErrorKeys?: {
+    title?: string;
+  };
+  values?: {
+    title: string;
   };
 };
 
@@ -98,4 +112,70 @@ export async function createLibraryAction(
 
   revalidatePath("/libraries");
   redirect(`/libraries/${library.id}`);
+}
+
+function validateLibraryFolderInput(formData: FormData): {
+  title: string;
+  fieldErrorKeys?: LibraryFolderFormState["fieldErrorKeys"];
+} {
+  const title = getField(formData, "title");
+  const fieldErrorKeys: NonNullable<LibraryFolderFormState["fieldErrorKeys"]> = {};
+
+  if (!title) {
+    fieldErrorKeys.title = "libraries.folderTitleRequired";
+  }
+
+  return {
+    title,
+    fieldErrorKeys: Object.keys(fieldErrorKeys).length > 0 ? fieldErrorKeys : undefined,
+  };
+}
+
+function buildFolderErrorState(
+  input: ReturnType<typeof validateLibraryFolderInput>,
+  formError?: string,
+  formErrorKey?: string,
+): LibraryFolderFormState {
+  return {
+    formError,
+    formErrorKey,
+    fieldErrorKeys: input.fieldErrorKeys,
+    values: {
+      title: input.title,
+    },
+  };
+}
+
+export async function createRootLibraryFolderAction(
+  libraryId: string,
+  _previousState: LibraryFolderFormState,
+  formData: FormData,
+): Promise<LibraryFolderFormState> {
+  const user = await requireAuthenticatedUser();
+  const library = await getLibraryById(libraryId);
+
+  if (!library || library.ownerId !== user.id) {
+    notFound();
+  }
+
+  const currentLibrary = library;
+  const input = validateLibraryFolderInput(formData);
+
+  if (input.fieldErrorKeys) {
+    return buildFolderErrorState(input);
+  }
+
+  try {
+    await createRootLibraryFolder({
+      libraryId: currentLibrary.id,
+      ownerId: user.id,
+      title: input.title,
+    });
+  } catch {
+    return buildFolderErrorState(input, undefined, "libraries.createFolderError");
+  }
+
+  revalidatePath("/libraries");
+  revalidatePath(`/libraries/${currentLibrary.id}`);
+  redirect(`/libraries/${currentLibrary.id}`);
 }

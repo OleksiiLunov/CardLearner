@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { ReactNode } from "react";
 
 import type { LibraryFolderSummary, LibraryListSummary } from "@/lib/data/libraries";
 
@@ -16,6 +17,7 @@ type LibraryNavigationContentProps = {
   parentTitle?: string;
   sectionDescription?: string | null;
   sectionTitle: string;
+  topContent?: ReactNode;
   t: {
     emptyFolders: string;
     emptyLists: string;
@@ -34,6 +36,7 @@ export function LibraryNavigationContent({
   parentTitle,
   sectionDescription,
   sectionTitle,
+  topContent,
   t,
 }: LibraryNavigationContentProps) {
   const hasContents = folders.length > 0 || lists.length > 0;
@@ -79,6 +82,8 @@ export function LibraryNavigationContent({
           ) : null}
         </div>
       </section>
+
+      {topContent}
 
       {!hasContents ? (
         <section className="rounded-[2.25rem] border border-dashed border-border bg-card/70 p-6 text-center shadow-sm backdrop-blur">

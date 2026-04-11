@@ -1,5 +1,7 @@
 import { notFound } from "next/navigation";
 
+import { createRootLibraryFolderAction } from "@/app/actions/libraries";
+import { CreateRootFolderForm } from "@/components/libraries/create-root-folder-form";
 import { LibraryNavigationContent } from "@/components/libraries/library-navigation-content";
 import { getServerLocale } from "@/i18n/get-server-locale";
 import { getLibraryById, getLibraryRootContents } from "@/lib/data/libraries";
@@ -13,7 +15,11 @@ type LibraryDetailsPageProps = {
 };
 
 export default async function LibraryDetailsPage({ params }: LibraryDetailsPageProps) {
-  const [{ libraryId }, locale] = await Promise.all([params, getServerLocale(), requireUser()]);
+  const [{ libraryId }, locale, user] = await Promise.all([
+    params,
+    getServerLocale(),
+    requireUser(),
+  ]);
   const t = translations[locale];
   const [library, contents] = await Promise.all([
     getLibraryById(libraryId),
@@ -25,6 +31,7 @@ export default async function LibraryDetailsPage({ params }: LibraryDetailsPageP
   }
 
   const currentLibrary = library;
+  const isOwner = currentLibrary.ownerId === user.id;
 
   return (
     <LibraryNavigationContent
@@ -38,6 +45,11 @@ export default async function LibraryDetailsPage({ params }: LibraryDetailsPageP
       lists={contents.lists}
       sectionDescription={currentLibrary.description}
       sectionTitle={currentLibrary.title}
+      topContent={
+        isOwner ? (
+          <CreateRootFolderForm action={createRootLibraryFolderAction.bind(null, currentLibrary.id)} />
+        ) : null
+      }
       t={{
         emptyFolders: t.libraries.emptyFolders,
         emptyLists: t.libraries.emptyLists,
