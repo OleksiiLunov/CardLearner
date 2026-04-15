@@ -1,0 +1,118 @@
+{
+    "libraries": [
+      {
+        "name": "English Seed Test",
+        "slug": "english-seed-test",
+        "levels": [
+          {
+            "name": "A1",
+            "slug": "a1",
+            "categories": [
+              {
+                "name": "Nouns",
+                "slug": "nouns",
+                "lists": [
+                  {
+                    "title": "Food & Drinks",
+                    "slug": "food-and-drinks",
+                    "items": [
+                      { "front": "apple", "back": "яблуко" },
+                      { "front": "bread", "back": "хліб" },
+                      { "front": "water", "back": "вода" },
+                      { "front": "milk", "back": "молоко" },
+                      { "front": "tea", "back": "чай" }
+                    ]
+                  },
+                  {
+                    "title": "Clothes & Shoes",
+                    "slug": "clothes-and-shoes",
+                    "items": [
+                      { "front": "shirt", "back": "сорочка" },
+                      { "front": "jacket", "back": "куртка" },
+                      { "front": "dress", "back": "сукня" },
+                      { "front": "shoes", "back": "взуття" },
+                      { "front": "hat", "back": "капелюх" }
+                    ]
+                  }
+                ]
+              },
+              {
+                "name": "Verbs",
+                "slug": "verbs",
+                "lists": [
+                  {
+                    "title": "Daily Actions",
+                    "slug": "daily-actions",
+                    "items": [
+                      { "front": "wake up", "back": "прокидатися" },
+                      { "front": "eat", "back": "їсти" },
+                      { "front": "drink", "back": "пити" },
+                      { "front": "work", "back": "працювати" },
+                      { "front": "sleep", "back": "спати" }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Bulgarian Seed Test",
+        "slug": "bulgarian-seed-test",
+        "levels": [
+          {
+            "name": "A1",
+            "slug": "a1",
+            "categories": [
+              {
+                "name": "Съществителни",
+                "slug": "nouns",
+                "lists": [
+                  {
+                    "title": "Храна и напитки",
+                    "slug": "food-and-drinks",
+                    "items": [
+                      { "front": "ябълка", "back": "apple" },
+                      { "front": "хляб", "back": "bread" },
+                      { "front": "вода", "back": "water" },
+                      { "front": "мляко", "back": "milk" },
+                      { "front": "чай", "back": "tea" }
+                    ]
+                  },
+                  {
+                    "title": "Дрехи и обувки",
+                    "slug": "clothes-and-shoes",
+                    "items": [
+                      { "front": "риза", "back": "shirt" },
+                      { "front": "яке", "back": "jacket" },
+                      { "front": "рокля", "back": "dress" },
+                      { "front": "обувки", "back": "shoes" },
+                      { "front": "шапка", "back": "hat" }
+                    ]
+                  }
+                ]
+              },
+              {
+                "name": "Глаголи",
+                "slug": "verbs",
+                "lists": [
+                  {
+                    "title": "Ежедневни действия",
+                    "slug": "daily-actions",
+                    "items": [
+                      { "front": "събуждам се", "back": "wake up" },
+                      { "front": "ям", "back": "eat" },
+                      { "front": "пия", "back": "drink" },
+                      { "front": "работя", "back": "work" },
+                      { "front": "спя", "back": "sleep" }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }

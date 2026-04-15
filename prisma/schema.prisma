@@ -37,6 +37,7 @@ model Library {
   id          String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   ownerId     String          @db.Uuid
   title       String
+  slug        String?         @unique
   description String?
   createdAt   DateTime        @default(now())
   updatedAt   DateTime        @default(now()) @updatedAt
@@ -53,6 +54,8 @@ model LibraryFolder {
   parentFolderId String?          @db.Uuid
   ownerId        String           @db.Uuid
   title          String
+  slug           String?
+  path           String?
   createdAt      DateTime         @default(now())
   updatedAt      DateTime         @default(now()) @updatedAt
   library        Library          @relation(fields: [libraryId], references: [id], onDelete: Cascade)
@@ -62,6 +65,7 @@ model LibraryFolder {
 
   @@index([libraryId, parentFolderId])
   @@index([title])
+  @@unique([libraryId, path])
 }
 
 model LibraryList {
@@ -70,6 +74,8 @@ model LibraryList {
   parentFolderId String?           @db.Uuid
   ownerId        String            @db.Uuid
   title          String
+  slug           String?
+  path           String?
   description    String?
   createdAt      DateTime          @default(now())
   updatedAt      DateTime          @default(now()) @updatedAt
@@ -79,6 +85,7 @@ model LibraryList {
 
   @@index([libraryId, parentFolderId])
   @@index([title])
+  @@unique([libraryId, path])
 }
 
 model LibraryListItem {
