@@ -1,118 +1,166 @@
 {
-    "libraries": [
-      {
-        "name": "English Seed Test",
-        "slug": "english-seed-test",
-        "levels": [
-          {
-            "name": "A1",
-            "slug": "a1",
-            "categories": [
-              {
-                "name": "Nouns",
-                "slug": "nouns",
-                "lists": [
-                  {
-                    "title": "Food & Drinks",
-                    "slug": "food-and-drinks",
-                    "items": [
-                      { "front": "apple", "back": "яблуко" },
-                      { "front": "bread", "back": "хліб" },
-                      { "front": "water", "back": "вода" },
-                      { "front": "milk", "back": "молоко" },
-                      { "front": "tea", "back": "чай" }
-                    ]
-                  },
-                  {
-                    "title": "Clothes & Shoes",
-                    "slug": "clothes-and-shoes",
-                    "items": [
-                      { "front": "shirt", "back": "сорочка" },
-                      { "front": "jacket", "back": "куртка" },
-                      { "front": "dress", "back": "сукня" },
-                      { "front": "shoes", "back": "взуття" },
-                      { "front": "hat", "back": "капелюх" }
-                    ]
-                  }
-                ]
-              },
-              {
-                "name": "Verbs",
-                "slug": "verbs",
-                "lists": [
-                  {
-                    "title": "Daily Actions",
-                    "slug": "daily-actions",
-                    "items": [
-                      { "front": "wake up", "back": "прокидатися" },
-                      { "front": "eat", "back": "їсти" },
-                      { "front": "drink", "back": "пити" },
-                      { "front": "work", "back": "працювати" },
-                      { "front": "sleep", "back": "спати" }
-                    ]
-                  }
-                ]
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "name": "Bulgarian Seed Test",
-        "slug": "bulgarian-seed-test",
-        "levels": [
-          {
-            "name": "A1",
-            "slug": "a1",
-            "categories": [
-              {
-                "name": "Съществителни",
-                "slug": "nouns",
-                "lists": [
-                  {
-                    "title": "Храна и напитки",
-                    "slug": "food-and-drinks",
-                    "items": [
-                      { "front": "ябълка", "back": "apple" },
-                      { "front": "хляб", "back": "bread" },
-                      { "front": "вода", "back": "water" },
-                      { "front": "мляко", "back": "milk" },
-                      { "front": "чай", "back": "tea" }
-                    ]
-                  },
-                  {
-                    "title": "Дрехи и обувки",
-                    "slug": "clothes-and-shoes",
-                    "items": [
-                      { "front": "риза", "back": "shirt" },
-                      { "front": "яке", "back": "jacket" },
-                      { "front": "рокля", "back": "dress" },
-                      { "front": "обувки", "back": "shoes" },
-                      { "front": "шапка", "back": "hat" }
-                    ]
-                  }
-                ]
-              },
-              {
-                "name": "Глаголи",
-                "slug": "verbs",
-                "lists": [
-                  {
-                    "title": "Ежедневни действия",
-                    "slug": "daily-actions",
-                    "items": [
-                      { "front": "събуждам се", "back": "wake up" },
-                      { "front": "ям", "back": "eat" },
-                      { "front": "пия", "back": "drink" },
-                      { "front": "работя", "back": "work" },
-                      { "front": "спя", "back": "sleep" }
-                    ]
-                  }
-                ]
-              }
-            ]
-          }
-        ]
-      }
-    ]
-  }
+  "libraries": [
+    {
+      "name": "Korvins English/Ukr",
+      "slug": "korvins-english-ukr",
+      "levels": [
+        {
+          "name": "A1",
+          "slug": "a1",
+          "categories": [
+            {
+              "name": "Nouns",
+              "slug": "nouns",
+              "lists": [
+                { "title": "People & Family", "slug": "people-and-family", "items": [{ "front": "mother", "back": "мати" }, { "front": "father", "back": "батько" }, { "front": "brother", "back": "брат" }, { "front": "sister", "back": "сестра" }, { "front": "friend", "back": "друг" }, { "front": "child", "back": "дитина" }, { "front": "parents", "back": "батьки" }, { "front": "teacher", "back": "вчитель" }] },
+                { "title": "Home & Rooms", "slug": "home-and-rooms", "items": [{ "front": "house", "back": "будинок" }, { "front": "apartment", "back": "квартира" }, { "front": "room", "back": "кімната" }, { "front": "kitchen", "back": "кухня" }, { "front": "bathroom", "back": "ванна кімната" }, { "front": "door", "back": "двері" }, { "front": "window", "back": "вікно" }, { "front": "table", "back": "стіл" }] },
+                { "title": "Food & Drinks", "slug": "food-and-drinks", "items": [{ "front": "bread", "back": "хліб" }, { "front": "milk", "back": "молоко" }, { "front": "water", "back": "вода" }, { "front": "tea", "back": "чай" }, { "front": "coffee", "back": "кава" }, { "front": "apple", "back": "яблуко" }, { "front": "soup", "back": "суп" }, { "front": "cheese", "back": "сир" }] },
+                { "title": "Clothes & Personal Things", "slug": "clothes-and-personal-things", "items": [{ "front": "shirt", "back": "сорочка" }, { "front": "shoes", "back": "взуття" }, { "front": "jacket", "back": "куртка" }, { "front": "dress", "back": "сукня" }, { "front": "bag", "back": "сумка" }, { "front": "phone", "back": "телефон" }, { "front": "key", "back": "ключ" }, { "front": "hat", "back": "капелюх" }] },
+                { "title": "City & Places", "slug": "city-and-places", "items": [{ "front": "street", "back": "вулиця" }, { "front": "shop", "back": "магазин" }, { "front": "school", "back": "школа" }, { "front": "park", "back": "парк" }, { "front": "station", "back": "станція" }, { "front": "hospital", "back": "лікарня" }, { "front": "bank", "back": "банк" }, { "front": "market", "back": "ринок" }] },
+                { "title": "School & Work Basics", "slug": "school-and-work-basics", "items": [{ "front": "book", "back": "книга" }, { "front": "pen", "back": "ручка" }, { "front": "notebook", "back": "зошит" }, { "front": "lesson", "back": "урок" }, { "front": "homework", "back": "домашнє завдання" }, { "front": "office", "back": "офіс" }, { "front": "job", "back": "робота" }, { "front": "computer", "back": "комп'ютер" }] }
+              ]
+            },
+            {
+              "name": "Verbs",
+              "slug": "verbs",
+              "lists": [
+                { "title": "Daily Actions", "slug": "daily-actions", "items": [{ "front": "wake up", "back": "прокидатися" }, { "front": "eat", "back": "їсти" }, { "front": "drink", "back": "пити" }, { "front": "wash", "back": "мити" }, { "front": "sleep", "back": "спати" }, { "front": "read", "back": "читати" }, { "front": "write", "back": "писати" }, { "front": "rest", "back": "відпочивати" }] },
+                { "title": "Home Actions", "slug": "home-actions", "items": [{ "front": "open", "back": "відкривати" }, { "front": "close", "back": "закривати" }, { "front": "clean", "back": "прибирати" }, { "front": "cook", "back": "готувати" }, { "front": "sit", "back": "сидіти" }, { "front": "stand", "back": "стояти" }, { "front": "bring", "back": "приносити" }, { "front": "put", "back": "класти" }] },
+                { "title": "Movement & Travel", "slug": "movement-and-travel", "items": [{ "front": "go", "back": "йти" }, { "front": "come", "back": "приходити" }, { "front": "walk", "back": "ходити пішки" }, { "front": "run", "back": "бігти" }, { "front": "drive", "back": "їхати на машині" }, { "front": "stop", "back": "зупинятися" }, { "front": "enter", "back": "входити" }, { "front": "leave", "back": "виходити" }] },
+                { "title": "Communication", "slug": "communication", "items": [{ "front": "speak", "back": "говорити" }, { "front": "say", "back": "казати" }, { "front": "ask", "back": "питати" }, { "front": "answer", "back": "відповідати" }, { "front": "call", "back": "дзвонити" }, { "front": "listen", "back": "слухати" }, { "front": "repeat", "back": "повторювати" }, { "front": "explain", "back": "пояснювати" }] },
+                { "title": "Learning & Work", "slug": "learning-and-work", "items": [{ "front": "study", "back": "вчитися" }, { "front": "learn", "back": "вивчати" }, { "front": "work", "back": "працювати" }, { "front": "help", "back": "допомагати" }, { "front": "check", "back": "перевіряти" }, { "front": "show", "back": "показувати" }, { "front": "start", "back": "починати" }, { "front": "finish", "back": "закінчувати" }] },
+                { "title": "Needs & Feelings", "slug": "needs-and-feelings", "items": [{ "front": "want", "back": "хотіти" }, { "front": "need", "back": "потребувати" }, { "front": "like", "back": "подобатися" }, { "front": "love", "back": "любити" }, { "front": "know", "back": "знати" }, { "front": "understand", "back": "розуміти" }, { "front": "worry", "back": "хвилюватися" }, { "front": "hope", "back": "сподіватися" }] }
+              ]
+            },
+            {
+              "name": "Adjectives",
+              "slug": "adjectives",
+              "lists": [
+                { "title": "Basic Descriptions", "slug": "basic-descriptions", "items": [{ "front": "good", "back": "хороший" }, { "front": "bad", "back": "поганий" }, { "front": "new", "back": "новий" }, { "front": "old", "back": "старий" }, { "front": "young", "back": "молодий" }, { "front": "beautiful", "back": "гарний" }, { "front": "important", "back": "важливий" }, { "front": "easy", "back": "легкий" }] },
+                { "title": "Size & Shape", "slug": "size-and-shape", "items": [{ "front": "big", "back": "великий" }, { "front": "small", "back": "малий" }, { "front": "long", "back": "довгий" }, { "front": "short", "back": "короткий" }, { "front": "high", "back": "високий" }, { "front": "low", "back": "низький" }, { "front": "round", "back": "круглий" }, { "front": "square", "back": "квадратний" }] },
+                { "title": "Colors", "slug": "colors", "items": [{ "front": "red", "back": "червоний" }, { "front": "blue", "back": "синій" }, { "front": "green", "back": "зелений" }, { "front": "yellow", "back": "жовтий" }, { "front": "black", "back": "чорний" }, { "front": "white", "back": "білий" }, { "front": "brown", "back": "коричневий" }, { "front": "gray", "back": "сірий" }] },
+                { "title": "Weather & Temperature", "slug": "weather-and-temperature", "items": [{ "front": "hot", "back": "гарячий" }, { "front": "cold", "back": "холодний" }, { "front": "warm", "back": "теплий" }, { "front": "cool", "back": "прохолодний" }, { "front": "sunny", "back": "сонячний" }, { "front": "rainy", "back": "дощовий" }, { "front": "windy", "back": "вітряний" }, { "front": "cloudy", "back": "хмарний" }] },
+                { "title": "Feelings & States", "slug": "feelings-and-states", "items": [{ "front": "happy", "back": "щасливий" }, { "front": "sad", "back": "сумний" }, { "front": "tired", "back": "втомлений" }, { "front": "busy", "back": "зайнятий" }, { "front": "ready", "back": "готовий" }, { "front": "sick", "back": "хворий" }, { "front": "hungry", "back": "голодний" }, { "front": "thirsty", "back": "спраглий" }] },
+                { "title": "Quality & Difficulty", "slug": "quality-and-difficulty", "items": [{ "front": "fast", "back": "швидкий" }, { "front": "slow", "back": "повільний" }, { "front": "strong", "back": "сильний" }, { "front": "weak", "back": "слабкий" }, { "front": "clean", "back": "чистий" }, { "front": "dirty", "back": "брудний" }, { "front": "difficult", "back": "важкий" }, { "front": "simple", "back": "простий" }] }
+              ]
+            },
+            {
+              "name": "Adverbs  Function Words",
+              "slug": "adverbs-and-function-words",
+              "lists": [
+                { "title": "Time Words", "slug": "time-words", "items": [{ "front": "now", "back": "зараз" }, { "front": "today", "back": "сьогодні" }, { "front": "tomorrow", "back": "завтра" }, { "front": "yesterday", "back": "вчора" }, { "front": "early", "back": "рано" }, { "front": "late", "back": "пізно" }, { "front": "soon", "back": "скоро" }, { "front": "already", "back": "вже" }] },
+                { "title": "Place & Direction Words", "slug": "place-and-direction-words", "items": [{ "front": "here", "back": "тут" }, { "front": "there", "back": "там" }, { "front": "inside", "back": "всередині" }, { "front": "outside", "back": "ззовні" }, { "front": "near", "back": "поруч" }, { "front": "far", "back": "далеко" }, { "front": "left", "back": "ліворуч" }, { "front": "right", "back": "праворуч" }] },
+                { "title": "Frequency & Degree", "slug": "frequency-and-degree", "items": [{ "front": "always", "back": "завжди" }, { "front": "usually", "back": "зазвичай" }, { "front": "often", "back": "часто" }, { "front": "sometimes", "back": "інколи" }, { "front": "never", "back": "ніколи" }, { "front": "very", "back": "дуже" }, { "front": "quite", "back": "доволі" }, { "front": "almost", "back": "майже" }] },
+                { "title": "Question & Linking Words", "slug": "question-and-linking-words", "items": [{ "front": "who", "back": "хто" }, { "front": "what", "back": "що" }, { "front": "where", "back": "де" }, { "front": "when", "back": "коли" }, { "front": "why", "back": "чому" }, { "front": "because", "back": "тому що" }, { "front": "and", "back": "і" }, { "front": "but", "back": "але" }] }
+              ]
+            },
+            {
+              "name": "Useful Phrases",
+              "slug": "useful-phrases",
+              "lists": [
+                { "title": "Greetings & Politeness", "slug": "greetings-and-politeness", "items": [{ "front": "Hello.", "back": "Привіт." }, { "front": "Good morning.", "back": "Доброго ранку." }, { "front": "Good afternoon.", "back": "Добрий день." }, { "front": "Good evening.", "back": "Добрий вечір." }, { "front": "Good night.", "back": "На добраніч." }, { "front": "Please.", "back": "Будь ласка." }, { "front": "Thank you.", "back": "Дякую." }, { "front": "Excuse me.", "back": "Перепрошую." }] },
+                { "title": "Introducing Yourself", "slug": "introducing-yourself", "items": [{ "front": "My name is Anna.", "back": "Мене звати Анна." }, { "front": "I am from Ukraine.", "back": "Я з України." }, { "front": "I live in Kyiv.", "back": "Я живу в Києві." }, { "front": "I am a student.", "back": "Я студент." }, { "front": "I am thirty years old.", "back": "Мені тридцять років." }, { "front": "Nice to meet you.", "back": "Приємно познайомитися." }, { "front": "This is my friend.", "back": "Це мій друг." }, { "front": "I speak a little English.", "back": "Я трохи говорю англійською." }] },
+                { "title": "Everyday Questions", "slug": "everyday-questions", "items": [{ "front": "How are you?", "back": "Як ти?" }, { "front": "What is your name?", "back": "Як тебе звати?" }, { "front": "Where do you live?", "back": "Де ти живеш?" }, { "front": "How old are you?", "back": "Скільки тобі років?" }, { "front": "What time is it?", "back": "Котра година?" }, { "front": "Can you help me?", "back": "Ти можеш мені допомогти?" }, { "front": "Do you understand?", "back": "Ти розумієш?" }, { "front": "How much is it?", "back": "Скільки це коштує?" }] },
+                { "title": "Shopping & Services", "slug": "shopping-and-services", "items": [{ "front": "I would like this.", "back": "Я хотів би це." }, { "front": "How much does it cost?", "back": "Скільки це коштує?" }, { "front": "Can I pay by card?", "back": "Можна оплатити карткою?" }, { "front": "I need a bag.", "back": "Мені потрібен пакет." }, { "front": "Do you have bread?", "back": "У вас є хліб?" }, { "front": "The bill, please.", "back": "Рахунок, будь ласка." }, { "front": "I am just looking.", "back": "Я просто дивлюся." }, { "front": "It is too expensive.", "back": "Це занадто дорого." }] },
+                { "title": "Travel & Directions", "slug": "travel-and-directions", "items": [{ "front": "Where is the station?", "back": "Де станція?" }, { "front": "I need a ticket.", "back": "Мені потрібен квиток." }, { "front": "Which bus goes there?", "back": "Який автобус туди їде?" }, { "front": "Turn left here.", "back": "Поверніть тут ліворуч." }, { "front": "Go straight ahead.", "back": "Ідіть прямо." }, { "front": "I am looking for this address.", "back": "Я шукаю цю адресу." }, { "front": "What platform is it?", "back": "Яка це платформа?" }, { "front": "The bus is late.", "back": "Автобус запізнюється." }] },
+                { "title": "Health & Emergencies", "slug": "health-and-emergencies", "items": [{ "front": "I need a doctor.", "back": "Мені потрібен лікар." }, { "front": "I feel sick.", "back": "Я погано почуваюся." }, { "front": "My head hurts.", "back": "У мене болить голова." }, { "front": "I need medicine.", "back": "Мені потрібні ліки." }, { "front": "Call an ambulance.", "back": "Викличте швидку." }, { "front": "Where is the pharmacy?", "back": "Де аптека?" }, { "front": "I have a fever.", "back": "У мене температура." }, { "front": "It is an emergency.", "back": "Це термінова ситуація." }] }
+              ]
+            },
+            {
+              "name": "Numbers, Time  Calendar",
+              "slug": "numbers-time-and-calendar",
+              "lists": [
+                { "title": "Numbers 0-20", "slug": "numbers-0-20", "items": [{ "front": "zero", "back": "нуль" }, { "front": "one", "back": "один" }, { "front": "two", "back": "два" }, { "front": "three", "back": "три" }, { "front": "four", "back": "чотири" }, { "front": "five", "back": "п'ять" }, { "front": "ten", "back": "десять" }, { "front": "twelve", "back": "дванадцять" }, { "front": "fifteen", "back": "п'ятнадцять" }, { "front": "twenty", "back": "двадцять" }] },
+                { "title": "Tens & Hundred", "slug": "tens-and-hundred", "items": [{ "front": "twenty", "back": "двадцять" }, { "front": "thirty", "back": "тридцять" }, { "front": "forty", "back": "сорок" }, { "front": "fifty", "back": "п'ятдесят" }, { "front": "sixty", "back": "шістдесят" }, { "front": "seventy", "back": "сімдесят" }, { "front": "eighty", "back": "вісімдесят" }, { "front": "ninety", "back": "дев'яносто" }, { "front": "one hundred", "back": "сто" }, { "front": "one thousand", "back": "тисяча" }] },
+                { "title": "Days & Months", "slug": "days-and-months", "items": [{ "front": "Monday", "back": "понеділок" }, { "front": "Tuesday", "back": "вівторок" }, { "front": "Wednesday", "back": "середа" }, { "front": "Thursday", "back": "четвер" }, { "front": "Friday", "back": "п'ятниця" }, { "front": "Saturday", "back": "субота" }, { "front": "Sunday", "back": "неділя" }, { "front": "January", "back": "січень" }, { "front": "February", "back": "лютий" }, { "front": "March", "back": "березень" }] },
+                { "title": "Time & Parts of Day", "slug": "time-and-parts-of-day", "items": [{ "front": "one o'clock", "back": "перша година" }, { "front": "two o'clock", "back": "друга година" }, { "front": "three o'clock", "back": "третя година" }, { "front": "morning", "back": "ранок" }, { "front": "afternoon", "back": "день" }, { "front": "evening", "back": "вечір" }, { "front": "night", "back": "ніч" }, { "front": "midnight", "back": "північ" }, { "front": "noon", "back": "полудень" }, { "front": "minute", "back": "хвилина" }] },
+                { "title": "Dates & Calendar Words", "slug": "dates-and-calendar-words", "items": [{ "front": "day", "back": "день" }, { "front": "week", "back": "тиждень" }, { "front": "month", "back": "місяць" }, { "front": "year", "back": "рік" }, { "front": "date", "back": "дата" }, { "front": "birthday", "back": "день народження" }, { "front": "holiday", "back": "свято" }, { "front": "weekend", "back": "вихідні" }, { "front": "spring", "back": "весна" }, { "front": "summer", "back": "літо" }] }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Korvins Bulgarian/Ukr",
+      "slug": "korvins-bulgarian-ukr",
+      "levels": [
+        {
+          "name": "A1",
+          "slug": "a1",
+          "categories": [
+            {
+              "name": "Съществителни",
+              "slug": "nouns",
+              "lists": [
+                { "title": "Хора и семейство", "slug": "people-and-family", "items": [{ "front": "майка", "back": "мати" }, { "front": "баща", "back": "батько" }, { "front": "брат", "back": "брат" }, { "front": "сестра", "back": "сестра" }, { "front": "приятел", "back": "друг" }, { "front": "дете", "back": "дитина" }, { "front": "родители", "back": "батьки" }, { "front": "учител", "back": "вчитель" }] },
+                { "title": "Дом и стаи", "slug": "home-and-rooms", "items": [{ "front": "къща", "back": "будинок" }, { "front": "апартамент", "back": "квартира" }, { "front": "стая", "back": "кімната" }, { "front": "кухня", "back": "кухня" }, { "front": "баня", "back": "ванна кімната" }, { "front": "врата", "back": "двері" }, { "front": "прозорец", "back": "вікно" }, { "front": "маса", "back": "стіл" }] },
+                { "title": "Храна и напитки", "slug": "food-and-drinks", "items": [{ "front": "хляб", "back": "хліб" }, { "front": "мляко", "back": "молоко" }, { "front": "вода", "back": "вода" }, { "front": "чай", "back": "чай" }, { "front": "кафе", "back": "кава" }, { "front": "ябълка", "back": "яблуко" }, { "front": "супа", "back": "суп" }, { "front": "сирене", "back": "сир" }] },
+                { "title": "Дрехи и лични вещи", "slug": "clothes-and-personal-things", "items": [{ "front": "риза", "back": "сорочка" }, { "front": "обувки", "back": "взуття" }, { "front": "яке", "back": "куртка" }, { "front": "рокля", "back": "сукня" }, { "front": "чанта", "back": "сумка" }, { "front": "телефон", "back": "телефон" }, { "front": "ключ", "back": "ключ" }, { "front": "шапка", "back": "капелюх" }] },
+                { "title": "Град и места", "slug": "city-and-places", "items": [{ "front": "улица", "back": "вулиця" }, { "front": "магазин", "back": "магазин" }, { "front": "училище", "back": "школа" }, { "front": "парк", "back": "парк" }, { "front": "гара", "back": "станція" }, { "front": "болница", "back": "лікарня" }, { "front": "банка", "back": "банк" }, { "front": "пазар", "back": "ринок" }] },
+                { "title": "Училище и работа", "slug": "school-and-work-basics", "items": [{ "front": "книга", "back": "книга" }, { "front": "химикал", "back": "ручка" }, { "front": "тетрадка", "back": "зошит" }, { "front": "урок", "back": "урок" }, { "front": "домашна работа", "back": "домашнє завдання" }, { "front": "офис", "back": "офіс" }, { "front": "работа", "back": "робота" }, { "front": "компютър", "back": "комп'ютер" }] }
+              ]
+            },
+            {
+              "name": "Глаголи",
+              "slug": "verbs",
+              "lists": [
+                { "title": "Ежедневни действия", "slug": "daily-actions", "items": [{ "front": "събуждам се", "back": "прокидатися" }, { "front": "ям", "back": "їсти" }, { "front": "пия", "back": "пити" }, { "front": "мия", "back": "мити" }, { "front": "спя", "back": "спати" }, { "front": "чета", "back": "читати" }, { "front": "пиша", "back": "писати" }, { "front": "почивам", "back": "відпочивати" }] },
+                { "title": "Действия у дома", "slug": "home-actions", "items": [{ "front": "отварям", "back": "відкривати" }, { "front": "затварям", "back": "закривати" }, { "front": "чистя", "back": "прибирати" }, { "front": "готвя", "back": "готувати" }, { "front": "сядам", "back": "сидіти" }, { "front": "ставам", "back": "стояти" }, { "front": "нося", "back": "приносити" }, { "front": "слагам", "back": "класти" }] },
+                { "title": "Движение и пътуване", "slug": "movement-and-travel", "items": [{ "front": "отивам", "back": "йти" }, { "front": "идвам", "back": "приходити" }, { "front": "вървя", "back": "ходити пішки" }, { "front": "тичам", "back": "бігти" }, { "front": "карам", "back": "їхати на машині" }, { "front": "спирам", "back": "зупинятися" }, { "front": "влизам", "back": "входити" }, { "front": "излизам", "back": "виходити" }] },
+                { "title": "Общуване", "slug": "communication", "items": [{ "front": "говоря", "back": "говорити" }, { "front": "казвам", "back": "казати" }, { "front": "питам", "back": "питати" }, { "front": "отговарям", "back": "відповідати" }, { "front": "обаждам се", "back": "дзвонити" }, { "front": "слушам", "back": "слухати" }, { "front": "повтарям", "back": "повторювати" }, { "front": "обяснявам", "back": "пояснювати" }] },
+                { "title": "Учене и работа", "slug": "learning-and-work", "items": [{ "front": "уча", "back": "вчитися" }, { "front": "научавам", "back": "вивчати" }, { "front": "работя", "back": "працювати" }, { "front": "помагам", "back": "допомагати" }, { "front": "проверявам", "back": "перевіряти" }, { "front": "показвам", "back": "показувати" }, { "front": "започвам", "back": "починати" }, { "front": "завършвам", "back": "закінчувати" }] },
+                { "title": "Нужди и чувства", "slug": "needs-and-feelings", "items": [{ "front": "искам", "back": "хотіти" }, { "front": "имам нужда", "back": "потребувати" }, { "front": "харесвам", "back": "подобатися" }, { "front": "обичам", "back": "любити" }, { "front": "зная", "back": "знати" }, { "front": "разбирам", "back": "розуміти" }, { "front": "тревожа се", "back": "хвилюватися" }, { "front": "надявам се", "back": "сподіватися" }] }
+              ]
+            },
+            {
+              "name": "Прилагателни",
+              "slug": "adjectives",
+              "lists": [
+                { "title": "Основни описания", "slug": "basic-descriptions", "items": [{ "front": "добър", "back": "хороший" }, { "front": "лош", "back": "поганий" }, { "front": "нов", "back": "новий" }, { "front": "стар", "back": "старий" }, { "front": "млад", "back": "молодий" }, { "front": "красив", "back": "гарний" }, { "front": "важен", "back": "важливий" }, { "front": "лесен", "back": "легкий" }] },
+                { "title": "Размер и форма", "slug": "size-and-shape", "items": [{ "front": "голям", "back": "великий" }, { "front": "малък", "back": "малий" }, { "front": "дълъг", "back": "довгий" }, { "front": "къс", "back": "короткий" }, { "front": "висок", "back": "високий" }, { "front": "нисък", "back": "низький" }, { "front": "кръгъл", "back": "круглий" }, { "front": "квадратен", "back": "квадратний" }] },
+                { "title": "Цветове", "slug": "colors", "items": [{ "front": "червен", "back": "червоний" }, { "front": "син", "back": "синій" }, { "front": "зелен", "back": "зелений" }, { "front": "жълт", "back": "жовтий" }, { "front": "черен", "back": "чорний" }, { "front": "бял", "back": "білий" }, { "front": "кафяв", "back": "коричневий" }, { "front": "сив", "back": "сірий" }] },
+                { "title": "Време и температура", "slug": "weather-and-temperature", "items": [{ "front": "горещ", "back": "гарячий" }, { "front": "студен", "back": "холодний" }, { "front": "топъл", "back": "теплий" }, { "front": "прохладен", "back": "прохолодний" }, { "front": "слънчев", "back": "сонячний" }, { "front": "дъждовен", "back": "дощовий" }, { "front": "ветровит", "back": "вітряний" }, { "front": "облачен", "back": "хмарний" }] },
+                { "title": "Чувства и състояния", "slug": "feelings-and-states", "items": [{ "front": "щастлив", "back": "щасливий" }, { "front": "тъжен", "back": "сумний" }, { "front": "уморен", "back": "втомлений" }, { "front": "зает", "back": "зайнятий" }, { "front": "готов", "back": "готовий" }, { "front": "болен", "back": "хворий" }, { "front": "гладен", "back": "голодний" }, { "front": "жаден", "back": "спраглий" }] },
+                { "title": "Качество и трудност", "slug": "quality-and-difficulty", "items": [{ "front": "бърз", "back": "швидкий" }, { "front": "бавен", "back": "повільний" }, { "front": "силен", "back": "сильний" }, { "front": "слаб", "back": "слабкий" }, { "front": "чист", "back": "чистий" }, { "front": "мръсен", "back": "брудний" }, { "front": "труден", "back": "важкий" }, { "front": "прост", "back": "простий" }] }
+              ]
+            },
+            {
+              "name": "Наречия и служебни думи",
+              "slug": "adverbs-and-function-words",
+              "lists": [
+                { "title": "Думи за време", "slug": "time-words", "items": [{ "front": "сега", "back": "зараз" }, { "front": "днес", "back": "сьогодні" }, { "front": "утре", "back": "завтра" }, { "front": "вчера", "back": "вчора" }, { "front": "рано", "back": "рано" }, { "front": "късно", "back": "пізно" }, { "front": "скоро", "back": "скоро" }, { "front": "вече", "back": "вже" }] },
+                { "title": "Думи за място и посока", "slug": "place-and-direction-words", "items": [{ "front": "тук", "back": "тут" }, { "front": "там", "back": "там" }, { "front": "вътре", "back": "всередині" }, { "front": "навън", "back": "ззовні" }, { "front": "близо", "back": "поруч" }, { "front": "далеч", "back": "далеко" }, { "front": "наляво", "back": "ліворуч" }, { "front": "надясно", "back": "праворуч" }] },
+                { "title": "Честота и степен", "slug": "frequency-and-degree", "items": [{ "front": "винаги", "back": "завжди" }, { "front": "обикновено", "back": "зазвичай" }, { "front": "често", "back": "часто" }, { "front": "понякога", "back": "інколи" }, { "front": "никога", "back": "ніколи" }, { "front": "много", "back": "дуже" }, { "front": "доста", "back": "доволі" }, { "front": "почти", "back": "майже" }] },
+                { "title": "Въпросителни и свързващи думи", "slug": "question-and-linking-words", "items": [{ "front": "кой", "back": "хто" }, { "front": "какво", "back": "що" }, { "front": "къде", "back": "де" }, { "front": "кога", "back": "коли" }, { "front": "защо", "back": "чому" }, { "front": "защото", "back": "тому що" }, { "front": "и", "back": "і" }, { "front": "но", "back": "але" }] }
+              ]
+            },
+            {
+              "name": "Полезни фрази",
+              "slug": "useful-phrases",
+              "lists": [
+                { "title": "Поздрави и учтивост", "slug": "greetings-and-politeness", "items": [{ "front": "Здравей.", "back": "Привіт." }, { "front": "Добро утро.", "back": "Доброго ранку." }, { "front": "Добър ден.", "back": "Добрий день." }, { "front": "Добър вечер.", "back": "Добрий вечір." }, { "front": "Лека нощ.", "back": "На добраніч." }, { "front": "Моля.", "back": "Будь ласка." }, { "front": "Благодаря.", "back": "Дякую." }, { "front": "Извинете ме.", "back": "Перепрошую." }] },
+                { "title": "Представяне", "slug": "introducing-yourself", "items": [{ "front": "Казвам се Анна.", "back": "Мене звати Анна." }, { "front": "Аз съм от Украйна.", "back": "Я з України." }, { "front": "Живея в Киев.", "back": "Я живу в Києві." }, { "front": "Аз съм студент.", "back": "Я студент." }, { "front": "Аз съм на тридесет години.", "back": "Мені тридцять років." }, { "front": "Приятно ми е.", "back": "Приємно познайомитися." }, { "front": "Това е моят приятел.", "back": "Це мій друг." }, { "front": "Говоря малко български.", "back": "Я трохи говорю болгарською." }] },
+                { "title": "Ежедневни въпроси", "slug": "everyday-questions", "items": [{ "front": "Как си?", "back": "Як ти?" }, { "front": "Как се казваш?", "back": "Як тебе звати?" }, { "front": "Къде живееш?", "back": "Де ти живеш?" }, { "front": "На колко години си?", "back": "Скільки тобі років?" }, { "front": "Колко е часът?", "back": "Котра година?" }, { "front": "Може ли да ми помогнеш?", "back": "Ти можеш мені допомогти?" }, { "front": "Разбираш ли?", "back": "Ти розумієш?" }, { "front": "Колко струва?", "back": "Скільки це коштує?" }] },
+                { "title": "Пазаруване и услуги", "slug": "shopping-and-services", "items": [{ "front": "Бих искал това.", "back": "Я хотів би це." }, { "front": "Колко струва?", "back": "Скільки це коштує?" }, { "front": "Мога ли да платя с карта?", "back": "Можна оплатити карткою?" }, { "front": "Имам нужда от торба.", "back": "Мені потрібен пакет." }, { "front": "Имате ли хляб?", "back": "У вас є хліб?" }, { "front": "Сметката, моля.", "back": "Рахунок, будь ласка." }, { "front": "Само разглеждам.", "back": "Я просто дивлюся." }, { "front": "Това е много скъпо.", "back": "Це занадто дорого." }] },
+                { "title": "Пътуване и посоки", "slug": "travel-and-directions", "items": [{ "front": "Къде е гарата?", "back": "Де станція?" }, { "front": "Имам нужда от билет.", "back": "Мені потрібен квиток." }, { "front": "Кой автобус отива там?", "back": "Який автобус туди їде?" }, { "front": "Завийте наляво тук.", "back": "Поверніть тут ліворуч." }, { "front": "Вървете направо.", "back": "Ідіть прямо." }, { "front": "Търся този адрес.", "back": "Я шукаю цю адресу." }, { "front": "Кой е перонът?", "back": "Яка це платформа?" }, { "front": "Автобусът закъснява.", "back": "Автобус запізнюється." }] },
+                { "title": "Здраве и спешни случаи", "slug": "health-and-emergencies", "items": [{ "front": "Имам нужда от лекар.", "back": "Мені потрібен лікар." }, { "front": "Чувствам се зле.", "back": "Я погано почуваюся." }, { "front": "Боли ме главата.", "back": "У мене болить голова." }, { "front": "Имам нужда от лекарство.", "back": "Мені потрібні ліки." }, { "front": "Повикайте линейка.", "back": "Викличте швидку." }, { "front": "Къде е аптеката?", "back": "Де аптека?" }, { "front": "Имам температура.", "back": "У мене температура." }, { "front": "Това е спешен случай.", "back": "Це термінова ситуація." }] }
+              ]
+            },
+            {
+              "name": "Числа, време и календар",
+              "slug": "numbers-time-and-calendar",
+              "lists": [
+                { "title": "Числа от 0 до 20", "slug": "numbers-0-20", "items": [{ "front": "нула", "back": "нуль" }, { "front": "едно", "back": "один" }, { "front": "две", "back": "два" }, { "front": "три", "back": "три" }, { "front": "четири", "back": "чотири" }, { "front": "пет", "back": "п'ять" }, { "front": "десет", "back": "десять" }, { "front": "дванадесет", "back": "дванадцять" }, { "front": "петнадесет", "back": "п'ятнадцять" }, { "front": "двадесет", "back": "двадцять" }] },
+                { "title": "Десетици и сто", "slug": "tens-and-hundred", "items": [{ "front": "двадесет", "back": "двадцять" }, { "front": "тридесет", "back": "тридцять" }, { "front": "четиридесет", "back": "сорок" }, { "front": "петдесет", "back": "п'ятдесят" }, { "front": "шестдесет", "back": "шістдесят" }, { "front": "седемдесет", "back": "сімдесят" }, { "front": "осемдесет", "back": "вісімдесят" }, { "front": "деветдесет", "back": "дев'яносто" }, { "front": "сто", "back": "сто" }, { "front": "хиляда", "back": "тисяча" }] },
+                { "title": "Дни и месеци", "slug": "days-and-months", "items": [{ "front": "понеделник", "back": "понеділок" }, { "front": "вторник", "back": "вівторок" }, { "front": "сряда", "back": "середа" }, { "front": "четвъртък", "back": "четвер" }, { "front": "петък", "back": "п'ятниця" }, { "front": "събота", "back": "субота" }, { "front": "неделя", "back": "неділя" }, { "front": "януари", "back": "січень" }, { "front": "февруари", "back": "лютий" }, { "front": "март", "back": "березень" }] },
+                { "title": "Час и части на деня", "slug": "time-and-parts-of-day", "items": [{ "front": "един час", "back": "перша година" }, { "front": "два часа", "back": "друга година" }, { "front": "три часа", "back": "третя година" }, { "front": "сутрин", "back": "ранок" }, { "front": "следобед", "back": "день" }, { "front": "вечер", "back": "вечір" }, { "front": "нощ", "back": "ніч" }, { "front": "полунощ", "back": "північ" }, { "front": "обед", "back": "полудень" }, { "front": "минута", "back": "хвилина" }] },
+                { "title": "Дати и календарни думи", "slug": "dates-and-calendar-words", "items": [{ "front": "ден", "back": "день" }, { "front": "седмица", "back": "тиждень" }, { "front": "месец", "back": "місяць" }, { "front": "година", "back": "рік" }, { "front": "дата", "back": "дата" }, { "front": "рожден ден", "back": "день народження" }, { "front": "празник", "back": "свято" }, { "front": "уикенд", "back": "вихідні" }, { "front": "пролет", "back": "весна" }, { "front": "лято", "back": "літо" }] }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

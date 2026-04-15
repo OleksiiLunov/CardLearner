@@ -3,7 +3,7 @@ import path from "node:path";
 import process from "node:process";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
-import { Prisma } from "@prisma/client";
+import { Prisma, type PrismaClient } from "@prisma/client";
 import { z } from "zod";
 
 const scriptDirectory = path.dirname(fileURLToPath(import.meta.url));
@@ -17,6 +17,7 @@ type LibrarySeedModule = typeof import("../src/lib/library-seeds/schema");
 type LibrarySeedFile = import("../src/lib/library-seeds/schema").LibrarySeedFile;
 type PrismaModule = typeof import("../src/lib/prisma");
 type TransactionClient = Prisma.TransactionClient;
+type DbClient = PrismaClient | TransactionClient;
 
 type CliOptions = {
   ownerId: string | null;
@@ -191,8 +192,8 @@ function printImportStats(stats: ImportStats): void {
   console.log(`- Replaced items count: ${stats.replacedItemsCount}`);
 }
 
-async function findLibraryBySlug(tx: TransactionClient, slug: string): Promise<LibraryRecord | null> {
-  return tx.library.findUnique({
+async function findLibraryBySlug(db: DbClient, slug: string): Promise<LibraryRecord | null> {
+  return db.library.findUnique({
     where: { slug },
     select: {
       id: true,
@@ -204,11 +205,11 @@ async function findLibraryBySlug(tx: TransactionClient, slug: string): Promise<L
 }
 
 async function findFolderByPath(
-  tx: TransactionClient,
+  db: DbClient,
   libraryId: string,
   folderPath: string,
 ): Promise<FolderRecord | null> {
-  return tx.libraryFolder.findFirst({
+  return db.libraryFolder.findFirst({
     where: {
       libraryId,
       path: folderPath,
@@ -225,11 +226,11 @@ async function findFolderByPath(
 }
 
 async function findListByPath(
-  tx: TransactionClient,
+  db: DbClient,
   libraryId: string,
   listPath: string,
 ): Promise<ListRecord | null> {
-  return tx.libraryList.findFirst({
+  return db.libraryList.findFirst({
     where: {
       libraryId,
       path: listPath,
@@ -245,18 +246,18 @@ async function findListByPath(
 }
 
 async function findOrCreateLibrary(
-  tx: TransactionClient,
+  db: DbClient,
   stats: ImportStats,
   ownerId: string,
   librarySeed: LibrarySeedFile["libraries"][number],
 ): Promise<LibraryRecord> {
-  const existingLibrary = await findLibraryBySlug(tx, librarySeed.slug);
+  const existingLibrary = await findLibraryBySlug(db, librarySeed.slug);
 
   if (existingLibrary !== null) {
     stats.reusedLibraries += 1;
 
     if (existingLibrary.title !== librarySeed.name) {
-      return tx.library.update({
+      return db.library.update({
         where: { id: existingLibrary.id },
         data: { title: librarySeed.name },
         select: {
@@ -273,7 +274,7 @@ async function findOrCreateLibrary(
 
   stats.createdLibraries += 1;
 
-  return tx.library.create({
+  return db.library.create({
     data: {
       ownerId,
       title: librarySeed.name,
@@ -290,7 +291,7 @@ async function findOrCreateLibrary(
 }
 
 async function findOrCreateFolder(
-  tx: TransactionClient,
+  db: DbClient,
   stats: ImportStats,
   input: {
     libraryId: string;
@@ -302,7 +303,7 @@ async function findOrCreateFolder(
   },
 ): Promise<FolderRecord> {
   const folderPath = buildFolderPath(input.parentPath, input.slug);
-  const existingFolder = await findFolderByPath(tx, input.libraryId, folderPath);
+  const existingFolder = await findFolderByPath(db, input.libraryId, folderPath);
 
   if (existingFolder !== null) {
     stats.reusedFolders += 1;
@@ -312,7 +313,7 @@ async function findOrCreateFolder(
       existingFolder.parentFolderId !== input.parentFolderId ||
       existingFolder.slug !== input.slug
     ) {
-      return tx.libraryFolder.update({
+      return db.libraryFolder.update({
         where: { id: existingFolder.id },
         data: {
           parentFolderId: input.parentFolderId,
@@ -336,7 +337,7 @@ async function findOrCreateFolder(
 
   stats.createdFolders += 1;
 
-  return tx.libraryFolder.create({
+  return db.libraryFolder.create({
     data: {
       libraryId: input.libraryId,
       ownerId: input.ownerId,
@@ -443,17 +444,35 @@ async function findOrCreateList(
   });
 }
 
+async function syncLibraryList(
+  prisma: PrismaClient,
+  stats: ImportStats,
+  input: {
+    folderId: string;
+    folderPath: string;
+    libraryId: string;
+    ownerId: string;
+    slug: string;
+    title: string;
+    items: LibrarySeedFile["libraries"][number]["levels"][number]["categories"][number]["lists"][number]["items"];
+  },
+): Promise<void> {
+  await prisma.$transaction(async (tx) => {
+    await findOrCreateList(tx, stats, input);
+  });
+}
+
 async function runImport(seedFile: LibrarySeedFile, ownerId: string): Promise<ImportStats> {
   prepareWriteDatabaseUrl();
   const { prisma } = await loadPrismaModule();
   const stats = createEmptyImportStats();
 
-  await prisma.$transaction(async (tx) => {
+  try {
     for (const library of seedFile.libraries) {
-      const libraryRecord = await findOrCreateLibrary(tx, stats, ownerId, library);
+      const libraryRecord = await findOrCreateLibrary(prisma, stats, ownerId, library);
 
       for (const level of library.levels) {
-        const levelFolder = await findOrCreateFolder(tx, stats, {
+        const levelFolder = await findOrCreateFolder(prisma, stats, {
           libraryId: libraryRecord.id,
           ownerId: libraryRecord.ownerId,
           parentFolderId: null,
@@ -467,7 +486,7 @@ async function runImport(seedFile: LibrarySeedFile, ownerId: string): Promise<Im
         }
 
         for (const category of level.categories) {
-          const categoryFolder = await findOrCreateFolder(tx, stats, {
+          const categoryFolder = await findOrCreateFolder(prisma, stats, {
             libraryId: libraryRecord.id,
             ownerId: libraryRecord.ownerId,
             parentFolderId: levelFolder.id,
@@ -481,7 +500,7 @@ async function runImport(seedFile: LibrarySeedFile, ownerId: string): Promise<Im
           }
 
           for (const list of category.lists) {
-            await findOrCreateList(tx, stats, {
+            await syncLibraryList(prisma, stats, {
               folderId: categoryFolder.id,
               folderPath: categoryFolder.path,
               libraryId: libraryRecord.id,
@@ -494,11 +513,11 @@ async function runImport(seedFile: LibrarySeedFile, ownerId: string): Promise<Im
         }
       }
     }
-  });
 
-  await prisma.$disconnect();
-
-  return stats;
+    return stats;
+  } finally {
+    await prisma.$disconnect();
+  }
 }
 
 async function main(): Promise<void> {
