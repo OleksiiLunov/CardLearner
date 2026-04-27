@@ -47,26 +47,14 @@ export async function getListsByUser(userId: string) {
 export async function getListByIdForUser(
   listId: string,
   userId: string,
-  perfLabel = "[perf] lists:getListByIdForUser",
 ) {
-  const startedAt = performance.now();
-  const queryStartedAt = performance.now();
-
-  try {
-    const list = await prisma.list.findFirst({
-      where: {
-        id: listId,
-        userId,
-      },
-      select: listWithItemsSelect,
-    });
-
-    console.log(`${perfLabel}:query ${Math.round(performance.now() - queryStartedAt)}ms`);
-
-    return list;
-  } finally {
-    console.log(`${perfLabel} ${Math.round(performance.now() - startedAt)}ms`);
-  }
+  return prisma.list.findFirst({
+    where: {
+      id: listId,
+      userId,
+    },
+    select: listWithItemsSelect,
+  });
 }
 
 export async function createListWithItems(input: CreateListWithItemsInput) {

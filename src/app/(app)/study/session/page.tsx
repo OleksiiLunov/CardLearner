@@ -14,21 +14,15 @@ type StudySessionPageProps = {
 };
 
 export default async function StudySessionPage({ searchParams }: StudySessionPageProps) {
-  const pageStartedAt = performance.now();
+  const { listId, source, initialSide, order } = await searchParams;
 
-  try {
-    const { listId, source, initialSide, order } = await searchParams;
-
-    if (isTemporaryStudySourceQueryValue(source ?? null)) {
-      return <TemporaryStudySessionRoute />;
-    }
-
-    if (!listId) {
-      redirect("/lists");
-    }
-
-    return <StudySessionRoute listId={listId} initialSide={initialSide ?? null} order={order ?? null} />;
-  } finally {
-    console.log(`[perf] start-study:page ${Math.round(performance.now() - pageStartedAt)}ms`);
+  if (isTemporaryStudySourceQueryValue(source ?? null)) {
+    return <TemporaryStudySessionRoute />;
   }
+
+  if (!listId) {
+    redirect("/lists");
+  }
+
+  return <StudySessionRoute listId={listId} initialSide={initialSide ?? null} order={order ?? null} />;
 }

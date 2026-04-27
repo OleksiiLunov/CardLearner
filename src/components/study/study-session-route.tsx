@@ -40,27 +40,18 @@ export function StudySessionRoute({
 
   useEffect(() => {
     let cancelled = false;
-    const pageStartedAt = performance.now();
-
-    function finishPageLog() {
-      console.log(`[perf] start-study:page ${Math.round(performance.now() - pageStartedAt)}ms`);
-    }
 
     if (initialSide !== "front" && initialSide !== "back") {
       router.replace(`/study/setup?listId=${encodeURIComponent(listId)}`);
-      finishPageLog();
       return;
     }
 
     if (order !== "original" && order !== "random") {
       router.replace(`/study/setup?listId=${encodeURIComponent(listId)}`);
-      finishPageLog();
       return;
     }
 
-    const storageStartedAt = performance.now();
     const stored = readNormalStudySessionPayload();
-    console.log(`[perf] start-study:prepareSession ${Math.round(performance.now() - storageStartedAt)}ms`);
 
     if (
       stored &&
@@ -75,7 +66,6 @@ export function StudySessionRoute({
         items: stored.items,
       });
       setLoaded(true);
-      finishPageLog();
       return;
     }
 
@@ -91,32 +81,27 @@ export function StudySessionRoute({
 
       if (payload.status === "unauthorized") {
         router.replace("/login");
-        finishPageLog();
         return;
       }
 
       if (payload.status === "not-found") {
         setMissing(true);
         setLoaded(true);
-        finishPageLog();
         return;
       }
 
       if (payload.status === "empty") {
         router.replace(`/study/setup?listId=${encodeURIComponent(listId)}`);
-        finishPageLog();
         return;
       }
 
       if (payload.status !== "ok") {
         router.replace(`/study/setup?listId=${encodeURIComponent(listId)}`);
-        finishPageLog();
         return;
       }
 
       setSession(payload.session);
       setLoaded(true);
-      finishPageLog();
     }
 
     loadFallback().catch(() => {
@@ -125,7 +110,6 @@ export function StudySessionRoute({
       }
 
       router.replace(`/study/setup?listId=${encodeURIComponent(listId)}`);
-      finishPageLog();
     });
 
     return () => {

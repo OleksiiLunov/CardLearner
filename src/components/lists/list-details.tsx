@@ -27,7 +27,6 @@ export function ListDetails({ created, updated, list }: ListDetailsProps) {
   const { t } = useTranslation();
 
   function handleStudyClick() {
-    const storageStartedAt = performance.now();
     saveNormalStudySetupSourcePayload({
       kind: "saved-list-source",
       listId: list.id,
@@ -39,12 +38,6 @@ export function ListDetails({ created, updated, list }: ListDetailsProps) {
         position: item.position,
       })),
     });
-    console.log(`[perf] study:sessionStorage ${Math.round(performance.now() - storageStartedAt)}ms`);
-
-    const startedAt = performance.now();
-    console.log(
-      `[perf] study:navigation /study/setup?listId=${encodeURIComponent(list.id)} ${Math.round(performance.now() - startedAt)}ms`,
-    );
   }
 
   return (

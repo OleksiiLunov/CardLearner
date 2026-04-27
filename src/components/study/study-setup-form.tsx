@@ -49,7 +49,6 @@ export function StudySetupForm({
     const hasValidOrder = order === "original" || order === "random";
 
     if (normalStudySource && hasValidInitialSide && hasValidOrder) {
-      const storageStartedAt = performance.now();
       saveNormalStudySessionPayload({
         kind: "saved-list",
         listId: normalStudySource.listId,
@@ -58,13 +57,7 @@ export function StudySetupForm({
         order,
         items: normalStudySource.items,
       });
-      console.log(`[perf] study:sessionStorage ${Math.round(performance.now() - storageStartedAt)}ms`);
     }
-
-    const navigationStartedAt = performance.now();
-    console.log(
-      `[perf] start-study:navigation /study/session?${params.toString()} ${Math.round(performance.now() - navigationStartedAt)}ms`,
-    );
   }
 
   return (

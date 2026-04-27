@@ -38,20 +38,11 @@ export function NormalStudySetup({ listId }: NormalStudySetupProps) {
 
   useEffect(() => {
     let cancelled = false;
-    const pageStartedAt = performance.now();
-
-    function finishPageLog() {
-      console.log(`[perf] study:page ${Math.round(performance.now() - pageStartedAt)}ms`);
-    }
-
-    const storageStartedAt = performance.now();
     const storedPayload = readNormalStudySetupSourcePayload();
-    console.log(`[perf] study:getSourceList ${Math.round(performance.now() - storageStartedAt)}ms`);
 
     if (storedPayload && storedPayload.listId === listId) {
       setPayload(storedPayload);
       setLoaded(true);
-      finishPageLog();
       return;
     }
 
@@ -67,27 +58,23 @@ export function NormalStudySetup({ listId }: NormalStudySetupProps) {
 
       if (fallbackPayload.status === "unauthorized") {
         router.replace("/login");
-        finishPageLog();
         return;
       }
 
       if (fallbackPayload.status === "not-found") {
         setMissing(true);
         setLoaded(true);
-        finishPageLog();
         return;
       }
 
       if (fallbackPayload.status !== "ok") {
         router.replace(`/lists/${encodeURIComponent(listId)}`);
-        finishPageLog();
         return;
       }
 
       saveNormalStudySetupSourcePayload(fallbackPayload.source);
       setPayload(fallbackPayload.source);
       setLoaded(true);
-      finishPageLog();
     }
 
     loadFallback().catch(() => {
@@ -96,7 +83,6 @@ export function NormalStudySetup({ listId }: NormalStudySetupProps) {
       }
 
       router.replace(`/lists/${encodeURIComponent(listId)}`);
-      finishPageLog();
     });
 
     return () => {
@@ -137,13 +123,9 @@ export function TemporaryStudySetup() {
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
-    const pageStartedAt = performance.now();
-    const startedAt = performance.now();
     const storedPayload = readTemporaryStudy();
-    console.log(`[perf] study:getSourceList ${Math.round(performance.now() - startedAt)}ms`);
     setPayload(storedPayload);
     setLoaded(true);
-    console.log(`[perf] study:page ${Math.round(performance.now() - pageStartedAt)}ms`);
   }, []);
 
   if (!loaded) {

@@ -17,7 +17,7 @@ export async function GET(request: Request) {
     return NextResponse.json({ status: "unauthorized" }, { status: 401 });
   }
 
-  const list = await getListByIdForUser(listId, user.id, "[perf] study:getSourceList");
+  const list = await getListByIdForUser(listId, user.id);
 
   if (!list) {
     return NextResponse.json({ status: "not-found" }, { status: 404 });
