@@ -6,6 +6,7 @@ import { DeleteListDialog } from "@/components/lists/delete-list-dialog";
 import { ListDetailsView } from "@/components/lists/list-details-view";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "@/i18n/useTranslation";
+import { saveNormalStudySetupSourcePayload } from "@/lib/study/storage";
 
 type ListDetailsProps = {
   created: boolean;
@@ -17,6 +18,7 @@ type ListDetailsProps = {
       id: string;
       front: string;
       back: string;
+      position: number;
     }>;
   };
 };
@@ -25,6 +27,20 @@ export function ListDetails({ created, updated, list }: ListDetailsProps) {
   const { t } = useTranslation();
 
   function handleStudyClick() {
+    const storageStartedAt = performance.now();
+    saveNormalStudySetupSourcePayload({
+      kind: "saved-list-source",
+      listId: list.id,
+      listName: list.name,
+      items: list.items.map((item) => ({
+        id: item.id,
+        front: item.front,
+        back: item.back,
+        position: item.position,
+      })),
+    });
+    console.log(`[perf] study:sessionStorage ${Math.round(performance.now() - storageStartedAt)}ms`);
+
     const startedAt = performance.now();
     console.log(
       `[perf] study:navigation /study/setup?listId=${encodeURIComponent(list.id)} ${Math.round(performance.now() - startedAt)}ms`,

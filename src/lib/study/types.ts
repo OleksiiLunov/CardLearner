@@ -20,6 +20,10 @@ export type NormalStudySessionPayload = StudySessionData & {
   order: StudyOrder;
 };
 
+export type NormalStudySetupSourcePayload = StudySessionData & {
+  kind: "saved-list-source";
+};
+
 export type TemporaryStudyKind = "temp-failed" | "library-list";
 
 export type TemporaryStudyPayload = {

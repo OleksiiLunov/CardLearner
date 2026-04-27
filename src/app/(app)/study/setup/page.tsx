@@ -1,8 +1,7 @@
-import { notFound, redirect } from "next/navigation";
+import { redirect } from "next/navigation";
 
-import { StudySetupForm } from "@/components/study/study-setup-form";
+import { NormalStudySetup } from "@/components/study/temporary-study-setup";
 import { TemporaryStudySetup } from "@/components/study/temporary-study-setup";
-import { getListByIdForUser } from "@/lib/data/lists";
 import { isTemporaryStudySourceQueryValue } from "@/lib/study/temp-study-storage";
 import { requireUser } from "@/lib/supabase/session";
 
@@ -14,48 +13,17 @@ type StudySetupPageProps = {
 };
 
 export default async function StudySetupPage({ searchParams }: StudySetupPageProps) {
-  const pageStartedAt = performance.now();
+  const { listId, source } = await searchParams;
 
-  try {
-    const { listId, source } = await searchParams;
-
-    if (isTemporaryStudySourceQueryValue(source ?? null)) {
-      return <TemporaryStudySetup />;
-    }
-
-    const user = await requireUser();
-
-    if (!listId) {
-      redirect("/lists");
-    }
-
-    const list = await getListByIdForUser(listId, user.id, "[perf] study:getSourceList");
-
-    if (!list) {
-      notFound();
-    }
-
-    const hasItems = list.items.length > 0;
-
-    return (
-      <StudySetupForm
-        hasItems={hasItems}
-        itemCount={list.items.length}
-        listName={list.name}
-        normalStudySource={{
-          listId: list.id,
-          items: list.items.map((item) => ({
-            id: item.id,
-            front: item.front,
-            back: item.back,
-            position: item.position,
-          })),
-        }}
-        hiddenFields={[{ name: "listId", value: list.id }]}
-        backHref={`/lists/${list.id}`}
-      />
-    );
-  } finally {
-    console.log(`[perf] study:page ${Math.round(performance.now() - pageStartedAt)}ms`);
+  if (isTemporaryStudySourceQueryValue(source ?? null)) {
+    return <TemporaryStudySetup />;
   }
+
+  if (!listId) {
+    redirect("/lists");
+  }
+
+  await requireUser();
+
+  return <NormalStudySetup listId={listId} />;
 }
