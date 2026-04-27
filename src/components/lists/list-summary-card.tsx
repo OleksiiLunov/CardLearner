@@ -24,6 +24,7 @@ export function ListSummaryCard({
   return (
     <Link
       href={href}
+      prefetch
       onClick={handleClick}
       className="group rounded-[2rem] border border-border bg-card/80 p-5 shadow-sm backdrop-blur transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md active:scale-[0.99]"
     >
