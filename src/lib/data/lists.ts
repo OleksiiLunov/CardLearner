@@ -16,24 +16,28 @@ export type UpdateListWithItemsInput = {
   items: ParsedListItemInput[];
 };
 
-const listInclude = {
+const listItemOrderBy = {
+  position: "asc",
+} satisfies Prisma.ListItemOrderByWithRelationInput;
+
+const listWithItemsSelect = {
+  id: true,
+  name: true,
   items: {
-    orderBy: {
-      position: "asc",
+    select: {
+      id: true,
+      front: true,
+      back: true,
+      position: true,
     },
+    orderBy: listItemOrderBy,
   },
-} satisfies Prisma.ListInclude;
+} satisfies Prisma.ListSelect;
 
 export async function getListsByUser(userId: string) {
   return prisma.list.findMany({
-    where: { userId },
-    include: {
-      items: {
-        orderBy: {
-          position: "asc",
-        },
-      },
-    },
+      where: { userId },
+    select: listWithItemsSelect,
     orderBy: {
       createdAt: "desc",
     },
@@ -46,15 +50,20 @@ export async function getListByIdForUser(
   perfLabel = "[perf] lists:getListByIdForUser",
 ) {
   const startedAt = performance.now();
+  const queryStartedAt = performance.now();
 
   try {
-    return await prisma.list.findFirst({
+    const list = await prisma.list.findFirst({
       where: {
         id: listId,
         userId,
       },
-      include: listInclude,
+      select: listWithItemsSelect,
     });
+
+    console.log(`${perfLabel}:query ${Math.round(performance.now() - queryStartedAt)}ms`);
+
+    return list;
   } finally {
     console.log(`${perfLabel} ${Math.round(performance.now() - startedAt)}ms`);
   }
@@ -73,7 +82,7 @@ export async function createListWithItems(input: CreateListWithItemsInput) {
         })),
       },
     },
-    include: listInclude,
+    select: listWithItemsSelect,
   });
 }
 
@@ -113,7 +122,7 @@ export async function updateListWithItems(input: UpdateListWithItemsInput) {
           })),
         },
       },
-      include: listInclude,
+      select: listWithItemsSelect,
     });
   });
 }
