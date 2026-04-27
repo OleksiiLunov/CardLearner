@@ -107,6 +107,7 @@ export function LibraryListDetails({
   const itemCount = list.items.length;
 
   function handleStudy() {
+    const storageStartedAt = performance.now();
     clearTemporaryStudy();
     clearTemporaryStudyResults();
     saveTemporaryStudy({
@@ -126,7 +127,13 @@ export function LibraryListDetails({
         backHref,
       },
     });
+    console.log(`[perf] study:sessionStorage ${Math.round(performance.now() - storageStartedAt)}ms`);
+
+    const navigationStartedAt = performance.now();
     router.push(`/study/setup?source=${encodeURIComponent(TEMP_LIBRARY_STUDY_QUERY_VALUE)}`);
+    console.log(
+      `[perf] study:navigation /study/setup?source=${encodeURIComponent(TEMP_LIBRARY_STUDY_QUERY_VALUE)} ${Math.round(performance.now() - navigationStartedAt)}ms`,
+    );
   }
 
   return (

@@ -16,9 +16,15 @@ export function ListSummaryCard({
 }) {
   const { t } = useTranslation();
 
+  function handleClick() {
+    const startedAt = performance.now();
+    console.log(`[perf] list-details:navigation ${href} ${Math.round(performance.now() - startedAt)}ms`);
+  }
+
   return (
     <Link
       href={href}
+      onClick={handleClick}
       className="group rounded-[2rem] border border-border bg-card/80 p-5 shadow-sm backdrop-blur transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md active:scale-[0.99]"
     >
       <div className="flex items-start justify-between gap-4">

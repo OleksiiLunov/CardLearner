@@ -8,6 +8,18 @@ export type StudyCard = {
   position: number;
 };
 
+export type StudySessionData = {
+  listId: string;
+  listName: string;
+  items: StudyCard[];
+};
+
+export type NormalStudySessionPayload = StudySessionData & {
+  kind: "saved-list";
+  initialSide: StudyInitialSide;
+  order: StudyOrder;
+};
+
 export type TemporaryStudyKind = "temp-failed" | "library-list";
 
 export type TemporaryStudyPayload = {

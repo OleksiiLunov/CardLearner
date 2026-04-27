@@ -14,7 +14,10 @@ export function TemporaryStudySetup() {
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
-    setPayload(readTemporaryStudy());
+    const startedAt = performance.now();
+    const storedPayload = readTemporaryStudy();
+    console.log(`[perf] study:getSourceList ${Math.round(performance.now() - startedAt)}ms`);
+    setPayload(storedPayload);
     setLoaded(true);
   }, []);
 

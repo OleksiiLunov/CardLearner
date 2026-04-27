@@ -1,14 +1,21 @@
 "use client";
 
+import type { FormEvent } from "react";
 import Link from "next/link";
 
 import { useTranslation } from "@/i18n/useTranslation";
 import { Button } from "@/components/ui/button";
+import { saveNormalStudySessionPayload } from "@/lib/study/storage";
+import type { StudyCard } from "@/lib/study/types";
 
 type StudySetupFormProps = {
   hasItems: boolean;
   itemCount: number;
   listName: string;
+  normalStudySource?: {
+    listId: string;
+    items: StudyCard[];
+  };
   hiddenFields: Array<{
     name: string;
     value: string;
@@ -20,10 +27,45 @@ export function StudySetupForm({
   hasItems,
   itemCount,
   listName,
+  normalStudySource,
   hiddenFields,
   backHref,
 }: StudySetupFormProps) {
   const { t } = useTranslation();
+
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    const formData = new FormData(event.currentTarget);
+    const params = new URLSearchParams();
+
+    for (const [key, value] of formData.entries()) {
+      if (typeof value === "string") {
+        params.set(key, value);
+      }
+    }
+
+    const initialSide = params.get("initialSide");
+    const order = params.get("order");
+    const hasValidInitialSide = initialSide === "front" || initialSide === "back";
+    const hasValidOrder = order === "original" || order === "random";
+
+    if (normalStudySource && hasValidInitialSide && hasValidOrder) {
+      const storageStartedAt = performance.now();
+      saveNormalStudySessionPayload({
+        kind: "saved-list",
+        listId: normalStudySource.listId,
+        listName,
+        initialSide,
+        order,
+        items: normalStudySource.items,
+      });
+      console.log(`[perf] study:sessionStorage ${Math.round(performance.now() - storageStartedAt)}ms`);
+    }
+
+    const navigationStartedAt = performance.now();
+    console.log(
+      `[perf] start-study:navigation /study/session?${params.toString()} ${Math.round(performance.now() - navigationStartedAt)}ms`,
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -42,7 +84,11 @@ export function StudySetupForm({
         </div>
       </section>
 
-      <form action="/study/session" className="space-y-6 rounded-[2rem] border border-border bg-card/80 p-6 shadow-sm backdrop-blur">
+      <form
+        action="/study/session"
+        onSubmit={handleSubmit}
+        className="space-y-6 rounded-[2rem] border border-border bg-card/80 p-6 shadow-sm backdrop-blur"
+      >
         {hiddenFields.map((field) => (
           <input key={`${field.name}:${field.value}`} type="hidden" name={field.name} value={field.value} />
         ))}

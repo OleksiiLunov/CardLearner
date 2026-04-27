@@ -40,14 +40,24 @@ export async function getListsByUser(userId: string) {
   });
 }
 
-export async function getListByIdForUser(listId: string, userId: string) {
-  return prisma.list.findFirst({
-    where: {
-      id: listId,
-      userId,
-    },
-    include: listInclude,
-  });
+export async function getListByIdForUser(
+  listId: string,
+  userId: string,
+  perfLabel = "[perf] lists:getListByIdForUser",
+) {
+  const startedAt = performance.now();
+
+  try {
+    return await prisma.list.findFirst({
+      where: {
+        id: listId,
+        userId,
+      },
+      include: listInclude,
+    });
+  } finally {
+    console.log(`${perfLabel} ${Math.round(performance.now() - startedAt)}ms`);
+  }
 }
 
 export async function createListWithItems(input: CreateListWithItemsInput) {

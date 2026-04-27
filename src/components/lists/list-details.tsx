@@ -24,6 +24,13 @@ type ListDetailsProps = {
 export function ListDetails({ created, updated, list }: ListDetailsProps) {
   const { t } = useTranslation();
 
+  function handleStudyClick() {
+    const startedAt = performance.now();
+    console.log(
+      `[perf] study:navigation /study/setup?listId=${encodeURIComponent(list.id)} ${Math.round(performance.now() - startedAt)}ms`,
+    );
+  }
+
   return (
     <ListDetailsView
       eyebrow={t("lists.detailsEyebrow")}
@@ -38,7 +45,7 @@ export function ListDetails({ created, updated, list }: ListDetailsProps) {
       actions={
         <>
           <Button asChild className="w-full">
-            <Link href={`/study/setup?listId=${encodeURIComponent(list.id)}`}>
+            <Link href={`/study/setup?listId=${encodeURIComponent(list.id)}`} onClick={handleStudyClick}>
               {t("navigation.study")}
             </Link>
           </Button>

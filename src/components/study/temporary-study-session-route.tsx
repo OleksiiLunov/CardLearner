@@ -27,7 +27,9 @@ export function TemporaryStudySessionRoute() {
   const source = searchParams.get("source");
 
   useEffect(() => {
+    const startedAt = performance.now();
     const stored = readTemporaryStudy();
+    console.log(`[perf] start-study:prepareSession ${Math.round(performance.now() - startedAt)}ms`);
     setPayload(stored);
     setLoaded(true);
 

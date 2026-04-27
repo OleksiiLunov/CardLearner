@@ -1,11 +1,8 @@
-import { notFound, redirect } from "next/navigation";
+import { redirect } from "next/navigation";
 
-import { StudySession } from "@/components/study/study-session";
+import { StudySessionRoute } from "@/components/study/study-session-route";
 import { TemporaryStudySessionRoute } from "@/components/study/temporary-study-session-route";
-import { getListByIdForUser } from "@/lib/data/lists";
 import { isTemporaryStudySourceQueryValue } from "@/lib/study/temp-study-storage";
-import type { StudyInitialSide, StudyOrder } from "@/lib/study/types";
-import { requireUser } from "@/lib/supabase/session";
 
 type StudySessionPageProps = {
   searchParams: Promise<{
@@ -17,48 +14,21 @@ type StudySessionPageProps = {
 };
 
 export default async function StudySessionPage({ searchParams }: StudySessionPageProps) {
-  const { listId, source, initialSide, order } = await searchParams;
+  const pageStartedAt = performance.now();
 
-  if (isTemporaryStudySourceQueryValue(source ?? null)) {
-    return <TemporaryStudySessionRoute />;
+  try {
+    const { listId, source, initialSide, order } = await searchParams;
+
+    if (isTemporaryStudySourceQueryValue(source ?? null)) {
+      return <TemporaryStudySessionRoute />;
+    }
+
+    if (!listId) {
+      redirect("/lists");
+    }
+
+    return <StudySessionRoute listId={listId} initialSide={initialSide ?? null} order={order ?? null} />;
+  } finally {
+    console.log(`[perf] start-study:page ${Math.round(performance.now() - pageStartedAt)}ms`);
   }
-
-  const user = await requireUser();
-
-  if (!listId) {
-    redirect("/lists");
-  }
-
-  if (initialSide !== "front" && initialSide !== "back") {
-    redirect(`/study/setup?listId=${encodeURIComponent(listId)}`);
-  }
-
-  if (order !== "original" && order !== "random") {
-    redirect(`/study/setup?listId=${encodeURIComponent(listId)}`);
-  }
-
-  const list = await getListByIdForUser(listId, user.id);
-
-  if (!list) {
-    notFound();
-  }
-
-  if (list.items.length === 0) {
-    redirect(`/study/setup?listId=${encodeURIComponent(list.id)}`);
-  }
-
-  return (
-    <StudySession
-      listId={list.id}
-      listName={list.name}
-      initialSide={initialSide as StudyInitialSide}
-      order={order as StudyOrder}
-      items={list.items.map((item) => ({
-        id: item.id,
-        front: item.front,
-        back: item.back,
-        position: item.position,
-      }))}
-    />
-  );
 }

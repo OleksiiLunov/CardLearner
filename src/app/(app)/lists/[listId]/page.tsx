@@ -18,14 +18,20 @@ export default async function ListDetailsPage({
   params,
   searchParams,
 }: ListDetailsPageProps) {
-  const user = await requireUser();
-  const { listId } = await params;
-  const { created, updated } = await searchParams;
-  const list = await getListByIdForUser(listId, user.id);
+  const pageStartedAt = performance.now();
 
-  if (!list) {
-    notFound();
+  try {
+    const user = await requireUser();
+    const { listId } = await params;
+    const { created, updated } = await searchParams;
+    const list = await getListByIdForUser(listId, user.id, "[perf] list-details:getList");
+
+    if (!list) {
+      notFound();
+    }
+
+    return <ListDetails created={Boolean(created)} updated={Boolean(updated)} list={list} />;
+  } finally {
+    console.log(`[perf] list-details:page ${Math.round(performance.now() - pageStartedAt)}ms`);
   }
-
-  return <ListDetails created={Boolean(created)} updated={Boolean(updated)} list={list} />;
 }
